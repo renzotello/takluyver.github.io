@@ -1,0 +1,172 @@
+.. slug: writing-readable-python-coroutines
+.. link: 
+.. tags: 
+.. title: Writing readable Python coroutines
+.. date: 2013/07/19 14:28:51
+.. description: 
+
+There's quite a bit of interest in using Python's coroutine features to support asynchronous code, such as the `tulip <http://code.google.com/p/tulip/>`_ effort. But with the exception of `this excellent tutorial <http://dabeaz.com/coroutines/>`_ by David Beazley, not much has been written about writing regular coroutines: functions that can be suspended and resumed, passing data in and out.
+
+Here's a simple example, a coroutine that repeatedly accepts a word and returns whether it has seen that word before:
+
+.. code:: python
+
+    def have_seen(case_sensitive=False):
+        seen = set()
+        
+        res = None
+        while True:
+            word = (yield res)
+            if not case_sensitive:
+                word = word.lower()
+            
+            res = (word in seen)
+            seen.add(word)
+
+We can use it like this::
+
+    >>> hs = have_seen()
+    >>> next(hs)  # prime it
+    >>> hs.send('Hello')
+    False
+    >>> hs.send('World')
+    False
+    >>> hs.send('hello')
+    True
+
+This code isn't very clear, though:
+
+- Emitting and receiving a value happen in the same yield expression. So rather than yielding the response at the bottom of the loop, we have to store it in a variable and jump back to the top of the loop.
+- The coroutine has to emit a value before it can receive one, even though there's nothing it really wants to emit. That's why we set ``res = None`` before the loop, and why the caller has to prime it by calling ``next(hs)`` before using it. It's easy to write a decorator that calls ``next`` for you, but that doesn't make the code inside the coroutine any clearer.
+
+Is there a clearer way to do it? Using the coromagic module below, we can separate sending and receiving values:
+
+.. code:: python
+
+    from coromagic import coroutine, receive
+
+    @coroutine
+    def have_seen2(case_sensitive=False):
+        seen = set()
+        
+        while True:
+            word = (yield receive)
+            if not case_sensitive:
+                word = word.lower()
+            
+            yield (word in seen)
+            seen.add(word)
+
+We no longer need the `res` variable. Instead, we alternate between two uses of yield: a receiving yield, where we send the wrapper a token to indicate that we're ready for a new value, and a sending yield, where we don't expect to get a value back. The caller can use this in exactly the same way as the original coroutine, except that the wrapper primes it automatically, so there's no need to call `next(hs)`.
+
+For now, the wrapper expects a receiving yield first, and at most one sending yield after each receiving yield. These aren't hard limitations, though: I just haven't worked out how other patterns would work for the caller. If a receiving yield isn't followed by a sending yield, `None` is returned to the caller, just like a function without a return statement.
+
+*N.B. This is an idea, not a finished solution. For all I know, this design might be like goto—superficially attractive, but a horrible mess with any serious code. For instance, I haven't really thought about delegating to another coroutine in the sending vs. the receiving phase. Your thoughts and suggestions are welcome.*
+
+Handling exceptions
+-------------------
+
+If either of our coroutines above raises an exception, we can't use that coroutine again::
+
+    >>> hs.send(12)
+    Traceback (most recent call last):
+      File "<stdin>", line 1, in <module>
+      File "coro_ideas.py", line 8, in have_seen
+        word = word.lower()
+    AttributeError: 'int' object has no attribute 'lower'
+    >>> hs.send('hi')
+    Traceback (most recent call last):
+      File "<stdin>", line 1, in <module>
+    StopIteration
+
+I've got a solution of sorts for that, although it still feels a bit awkward. The coroutine can request a context manager to catch expressions:
+
+.. code:: python
+
+    from coromagic import get_exception_context
+
+    @coroutine
+    def have_seen3(case_sensitive=False):
+        exception_context = (yield get_exception_context)
+        seen = set()
+        
+        while True:
+            with exception_context:
+                word = (yield receive)
+                if not case_sensitive:
+                    word = word.lower()
+                
+                yield (word in seen)
+                seen.add(word)
+
+The context manager co-ordinates with the wrapper to suppress the exception inside the coroutine, but raise it to the caller::
+
+    >>> hs3 = have_seen3()
+    >>> hs3.send(12)
+    Traceback (most recent call last):
+      File "<stdin>", line 1, in <module>
+      File "./coromagic.py", line 28, in send
+        raise self.last_exc
+      File "./coro_ideas.py", line 47, in have_seen3
+        word = word.lower()
+    AttributeError: 'int' object has no attribute 'lower'
+    >>> hs3.send('hi')
+    False
+
+Now the error doesn't stop us processing valid input afterwards.
+
+Why not use queues?
+-------------------
+
+The pattern of sending and receiving is reminiscent of writing a thread with input and output queues, and waiting for values on those queues. But unlike a thread, there are no race conditions, and no need to shut it down safely. Calling the cororoutine is just like calling a function: it runs, returns a value, and the calling code carries on.
+
+Why do you need a coroutine anyway?
+-----------------------------------
+
+The examples above could easily have been written as a closure or a class. Coroutines come into their own when they can be suspended at different points in the code, representing different states. To do the same thing without a coroutine, each call would start by looking up the current state in an if/elif statement or a dictionary to decide what to do.
+
+It's hard to come up with trivial examples of that, but here's an example `from the IPython codebase <https://github.com/ipython/ipython/blob/08de7c607f60010852ed98943002e2d3f09f3baa/IPython/core/inputtransformer.py#L351>`_, rewritten using coromagic. It removes the prompts from example code copied and pasted into IPython. It handles the first two lines of the block in a *detection state*, then switches to either a *prompt-stripping state* or a *no-op state* until it gets a reset signal (``None``):
+
+.. code:: python
+
+    @coroutine
+    def _strip_prompts(prompt_re):
+        """Remove matching input prompts from a block of input."""
+        while True:
+            # First line of cell
+            line = (yield receive)
+            if line is None:
+                continue
+            out, n1 = prompt_re.subn('', line, count=1)
+            yield out
+            
+            # Second line of cell, because people often copy from just after the
+            # first prompt, so we might not see it in the first line.
+            line = (yield receive)
+            if line is None:
+                continue
+            out, n2 = prompt_re.subn('', line, count=1)
+            yield out
+            
+            line = (yield receive)
+            if n1 or n2:
+                # Found the input prompt in the first two lines - check for it in
+                # the rest of the cell as well.
+                while line is not None:
+                    yield prompt_re.sub('', line, count=1)
+                    line = (yield receive)
+            
+            else:
+                # Prompts not in input - wait for reset
+                while line is not None:
+                    yield line
+                    line = (yield receive)
+
+This is actually a bit longer than the code without using coromagic, but I think it's clearer what's going on.
+
+Coromagic source code
+---------------------
+
+This is the module used in the examples above.
+
+.. listing:: coromagic.py python

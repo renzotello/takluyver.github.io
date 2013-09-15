@@ -1,0 +1,341 @@
+<!DOCTYPE html><html lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <meta charset="utf-8">
+    <meta name="description" content="">
+    <meta name="author" content="Thomas Kluyver">
+    <title>Writing readable Python coroutines | Thomas' blog</title>
+    
+            <link href="../assets/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+            <link href="../assets/css/bootstrap-responsive.min.css" rel="stylesheet" type="text/css">
+        <link href="../assets/css/rst.css" rel="stylesheet" type="text/css">
+        <link href="../assets/css/code.css" rel="stylesheet" type="text/css">
+        <link href="../assets/css/colorbox.css" rel="stylesheet" type="text/css">
+        <link href="../assets/css/theme.css" rel="stylesheet" type="text/css">
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js" type="text/javascript"></script>
+    <![endif]-->
+            <link rel="alternate" type="application/rss+xml" title="RSS" href="../rss.xml">
+
+    
+
+
+
+    
+</head>
+<body>
+<!-- Menubar -->
+<div class="navbar navbar-fixed-top" id="navbar">
+    <div class="navbar-inner">
+        <div class="container">
+
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+        </a>
+
+            <a class="brand" href="../">
+            Thomas' blog
+            </a>
+            <!-- Everything you want hidden at 940px or less, place within here -->
+            <div class="nav-collapse collapse">
+                <ul class="nav">
+                    
+                <li><a href="../archive.html">Archives</a>
+                </li><li><a href="../categories/index.html">Tags</a>
+                </li><li><a href="../rss.xml">RSS</a>
+
+                </li></ul>
+                <ul class="nav pull-right">
+                
+                
+                    <li>
+			<a href="writing-readable-python-coroutines.txt" id="sourcelink">Source</a>
+		</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End of Menubar -->
+<div class="container-fluid" id="container-fluid">
+    <!--Body content-->
+    <div class="row-fluid">
+    <div class="span2"></div>
+    <div class="span8">
+    
+    <div class="postbox">
+    
+    <h1>Writing readable Python coroutines</h1>
+
+    <hr>
+    <small>
+        Posted: <time class="published" datetime="2013-07-19T14:28:51">2013-07-19 14:28</time>
+        
+
+		
+
+          |  
+		
+    </small>
+    <hr>
+    <p>There's quite a bit of interest in using Python's coroutine features to support asynchronous code, such as the <a class="reference external" href="http://code.google.com/p/tulip/">tulip</a> effort. But with the exception of <a class="reference external" href="http://dabeaz.com/coroutines/">this excellent tutorial</a> by David Beazley, not much has been written about writing regular coroutines: functions that can be suspended and resumed, passing data in and out.</p>
+<p>Here's a simple example, a coroutine that repeatedly accepts a word and returns whether it has seen that word before:</p>
+<pre class="code python literal-block">
+<span class="k">def</span> <span class="nf">have_seen</span><span class="p">(</span><span class="n">case_sensitive</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+    <span class="n">seen</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+
+    <span class="n">res</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
+        <span class="n">word</span> <span class="o">=</span> <span class="p">(</span><span class="k">yield</span> <span class="n">res</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">case_sensitive</span><span class="p">:</span>
+            <span class="n">word</span> <span class="o">=</span> <span class="n">word</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+
+        <span class="n">res</span> <span class="o">=</span> <span class="p">(</span><span class="n">word</span> <span class="ow">in</span> <span class="n">seen</span><span class="p">)</span>
+        <span class="n">seen</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">word</span><span class="p">)</span>
+</pre>
+<p>We can use it like this:</p>
+<pre class="literal-block">
+&gt;&gt;&gt; hs = have_seen()
+&gt;&gt;&gt; next(hs)  # prime it
+&gt;&gt;&gt; hs.send('Hello')
+False
+&gt;&gt;&gt; hs.send('World')
+False
+&gt;&gt;&gt; hs.send('hello')
+True
+</pre>
+<p>This code isn't very clear, though:</p>
+<ul class="simple">
+<li>Emitting and receiving a value happen in the same yield expression. So rather than yielding the response at the bottom of the loop, we have to store it in a variable and jump back to the top of the loop.</li>
+<li>The coroutine has to emit a value before it can receive one, even though there's nothing it really wants to emit. That's why we set <tt class="docutils literal">res = None</tt> before the loop, and why the caller has to prime it by calling <tt class="docutils literal">next(hs)</tt> before using it. It's easy to write a decorator that calls <tt class="docutils literal">next</tt> for you, but that doesn't make the code inside the coroutine any clearer.</li>
+</ul>
+<p>Is there a clearer way to do it? Using the coromagic module below, we can separate sending and receiving values:</p>
+<pre class="code python literal-block">
+<span class="kn">from</span> <span class="nn">coromagic</span> <span class="kn">import</span> <span class="n">coroutine</span><span class="p">,</span> <span class="n">receive</span>
+
+<span class="nd">@coroutine</span>
+<span class="k">def</span> <span class="nf">have_seen2</span><span class="p">(</span><span class="n">case_sensitive</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+    <span class="n">seen</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+
+    <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
+        <span class="n">word</span> <span class="o">=</span> <span class="p">(</span><span class="k">yield</span> <span class="n">receive</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">case_sensitive</span><span class="p">:</span>
+            <span class="n">word</span> <span class="o">=</span> <span class="n">word</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+
+        <span class="k">yield</span> <span class="p">(</span><span class="n">word</span> <span class="ow">in</span> <span class="n">seen</span><span class="p">)</span>
+        <span class="n">seen</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">word</span><span class="p">)</span>
+</pre>
+<p>We no longer need the <cite>res</cite> variable. Instead, we alternate between two uses of yield: a receiving yield, where we send the wrapper a token to indicate that we're ready for a new value, and a sending yield, where we don't expect to get a value back. The caller can use this in exactly the same way as the original coroutine, except that the wrapper primes it automatically, so there's no need to call <cite>next(hs)</cite>.</p>
+<p>For now, the wrapper expects a receiving yield first, and at most one sending yield after each receiving yield. These aren't hard limitations, though: I just haven't worked out how other patterns would work for the caller. If a receiving yield isn't followed by a sending yield, <cite>None</cite> is returned to the caller, just like a function without a return statement.</p>
+<p><em>N.B. This is an idea, not a finished solution. For all I know, this design might be like goto—superficially attractive, but a horrible mess with any serious code. For instance, I haven't really thought about delegating to another coroutine in the sending vs. the receiving phase. Your thoughts and suggestions are welcome.</em></p>
+<div class="section" id="handling-exceptions">
+<h2>Handling exceptions</h2>
+<p>If either of our coroutines above raises an exception, we can't use that coroutine again:</p>
+<pre class="literal-block">
+&gt;&gt;&gt; hs.send(12)
+Traceback (most recent call last):
+  File "&lt;stdin&gt;", line 1, in &lt;module&gt;
+  File "coro_ideas.py", line 8, in have_seen
+    word = word.lower()
+AttributeError: 'int' object has no attribute 'lower'
+&gt;&gt;&gt; hs.send('hi')
+Traceback (most recent call last):
+  File "&lt;stdin&gt;", line 1, in &lt;module&gt;
+StopIteration
+</pre>
+<p>I've got a solution of sorts for that, although it still feels a bit awkward. The coroutine can request a context manager to catch expressions:</p>
+<pre class="code python literal-block">
+<span class="kn">from</span> <span class="nn">coromagic</span> <span class="kn">import</span> <span class="n">get_exception_context</span>
+
+<span class="nd">@coroutine</span>
+<span class="k">def</span> <span class="nf">have_seen3</span><span class="p">(</span><span class="n">case_sensitive</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+    <span class="n">exception_context</span> <span class="o">=</span> <span class="p">(</span><span class="k">yield</span> <span class="n">get_exception_context</span><span class="p">)</span>
+    <span class="n">seen</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+
+    <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
+        <span class="k">with</span> <span class="n">exception_context</span><span class="p">:</span>
+            <span class="n">word</span> <span class="o">=</span> <span class="p">(</span><span class="k">yield</span> <span class="n">receive</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">case_sensitive</span><span class="p">:</span>
+                <span class="n">word</span> <span class="o">=</span> <span class="n">word</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+
+            <span class="k">yield</span> <span class="p">(</span><span class="n">word</span> <span class="ow">in</span> <span class="n">seen</span><span class="p">)</span>
+            <span class="n">seen</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">word</span><span class="p">)</span>
+</pre>
+<p>The context manager co-ordinates with the wrapper to suppress the exception inside the coroutine, but raise it to the caller:</p>
+<pre class="literal-block">
+&gt;&gt;&gt; hs3 = have_seen3()
+&gt;&gt;&gt; hs3.send(12)
+Traceback (most recent call last):
+  File "&lt;stdin&gt;", line 1, in &lt;module&gt;
+  File "./coromagic.py", line 28, in send
+    raise self.last_exc
+  File "./coro_ideas.py", line 47, in have_seen3
+    word = word.lower()
+AttributeError: 'int' object has no attribute 'lower'
+&gt;&gt;&gt; hs3.send('hi')
+False
+</pre>
+<p>Now the error doesn't stop us processing valid input afterwards.</p>
+</div>
+<div class="section" id="why-not-use-queues">
+<h2>Why not use queues?</h2>
+<p>The pattern of sending and receiving is reminiscent of writing a thread with input and output queues, and waiting for values on those queues. But unlike a thread, there are no race conditions, and no need to shut it down safely. Calling the cororoutine is just like calling a function: it runs, returns a value, and the calling code carries on.</p>
+</div>
+<div class="section" id="why-do-you-need-a-coroutine-anyway">
+<h2>Why do you need a coroutine anyway?</h2>
+<p>The examples above could easily have been written as a closure or a class. Coroutines come into their own when they can be suspended at different points in the code, representing different states. To do the same thing without a coroutine, each call would start by looking up the current state in an if/elif statement or a dictionary to decide what to do.</p>
+<p>It's hard to come up with trivial examples of that, but here's an example <a class="reference external" href="https://github.com/ipython/ipython/blob/08de7c607f60010852ed98943002e2d3f09f3baa/IPython/core/inputtransformer.py#L351">from the IPython codebase</a>, rewritten using coromagic. It removes the prompts from example code copied and pasted into IPython. It handles the first two lines of the block in a <em>detection state</em>, then switches to either a <em>prompt-stripping state</em> or a <em>no-op state</em> until it gets a reset signal (<tt class="docutils literal">None</tt>):</p>
+<pre class="code python literal-block">
+<span class="nd">@coroutine</span>
+<span class="k">def</span> <span class="nf">_strip_prompts</span><span class="p">(</span><span class="n">prompt_re</span><span class="p">):</span>
+    <span class="sd">"""Remove matching input prompts from a block of input."""</span>
+    <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
+        <span class="c"># First line of cell</span>
+        <span class="n">line</span> <span class="o">=</span> <span class="p">(</span><span class="k">yield</span> <span class="n">receive</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">line</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="n">out</span><span class="p">,</span> <span class="n">n1</span> <span class="o">=</span> <span class="n">prompt_re</span><span class="o">.</span><span class="n">subn</span><span class="p">(</span><span class="s">''</span><span class="p">,</span> <span class="n">line</span><span class="p">,</span> <span class="n">count</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">yield</span> <span class="n">out</span>
+
+        <span class="c"># Second line of cell, because people often copy from just after the</span>
+        <span class="c"># first prompt, so we might not see it in the first line.</span>
+        <span class="n">line</span> <span class="o">=</span> <span class="p">(</span><span class="k">yield</span> <span class="n">receive</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">line</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="n">out</span><span class="p">,</span> <span class="n">n2</span> <span class="o">=</span> <span class="n">prompt_re</span><span class="o">.</span><span class="n">subn</span><span class="p">(</span><span class="s">''</span><span class="p">,</span> <span class="n">line</span><span class="p">,</span> <span class="n">count</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">yield</span> <span class="n">out</span>
+
+        <span class="n">line</span> <span class="o">=</span> <span class="p">(</span><span class="k">yield</span> <span class="n">receive</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">n1</span> <span class="ow">or</span> <span class="n">n2</span><span class="p">:</span>
+            <span class="c"># Found the input prompt in the first two lines - check for it in</span>
+            <span class="c"># the rest of the cell as well.</span>
+            <span class="k">while</span> <span class="n">line</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="k">yield</span> <span class="n">prompt_re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s">''</span><span class="p">,</span> <span class="n">line</span><span class="p">,</span> <span class="n">count</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+                <span class="n">line</span> <span class="o">=</span> <span class="p">(</span><span class="k">yield</span> <span class="n">receive</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c"># Prompts not in input - wait for reset</span>
+            <span class="k">while</span> <span class="n">line</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="k">yield</span> <span class="n">line</span>
+                <span class="n">line</span> <span class="o">=</span> <span class="p">(</span><span class="k">yield</span> <span class="n">receive</span><span class="p">)</span>
+</pre>
+<p>This is actually a bit longer than the code without using coromagic, but I think it's clearer what's going on.</p>
+</div>
+<div class="section" id="coromagic-source-code">
+<h2>Coromagic source code</h2>
+<p>This is the module used in the examples above.</p>
+<p><a class="reference external" href="../listings/coromagic.py.html">coromagic.py</a></p>
+<pre class="code python literal-block">
+<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">wraps</span>
+
+<span class="c"># Tokens</span>
+<span class="n">receive</span> <span class="o">=</span> <span class="nb">object</span><span class="p">()</span>
+<span class="n">get_exception_context</span> <span class="o">=</span> <span class="nb">object</span><span class="p">()</span>
+
+<span class="k">class</span> <span class="nc">CoroutineWrapper</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="n">last_exc</span> <span class="o">=</span> <span class="bp">None</span>
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">generator</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gen</span> <span class="o">=</span> <span class="n">generator</span>
+        
+        <span class="n">ready</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">gen</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">ready</span> <span class="ow">is</span> <span class="n">get_exception_context</span><span class="p">:</span>
+            <span class="n">ready</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gen</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">ExceptionContext</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
+        <span class="k">assert</span> <span class="n">ready</span> <span class="o">==</span> <span class="n">receive</span>
+    
+    <span class="k">def</span> <span class="nf">send</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">arg</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">last_exc</span> <span class="o">=</span> <span class="bp">None</span>
+        
+        <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gen</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">arg</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">res</span> <span class="ow">is</span> <span class="n">receive</span><span class="p">:</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="nb">next</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">gen</span><span class="p">)</span> <span class="ow">is</span> <span class="n">receive</span>
+        
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_exc</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_exc</span>
+        
+        <span class="k">return</span> <span class="n">res</span>
+
+<span class="k">def</span> <span class="nf">coroutine</span><span class="p">(</span><span class="n">genfunc</span><span class="p">):</span>
+    <span class="sd">"""Decorator for a generator function to wrap it as a coroutine."""</span>
+    <span class="nd">@wraps</span><span class="p">(</span><span class="n">genfunc</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">wrapped</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">CoroutineWrapper</span><span class="p">(</span><span class="n">genfunc</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">))</span>
+    
+    <span class="k">return</span> <span class="n">wrapped</span>
+
+<span class="k">class</span> <span class="nc">ExceptionContext</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">corowrapper</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">corowrapper</span> <span class="o">=</span> <span class="n">corowrapper</span>
+    
+    <span class="k">def</span> <span class="nf">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span>
+    
+    <span class="k">def</span> <span class="nf">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">type</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">tb</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">type</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="k">if</span> <span class="nb">type</span> <span class="ow">is</span> <span class="ne">GeneratorExit</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">False</span>
+        
+        <span class="c"># Pass other exceptions to the wrapper, and silence them for now</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">corowrapper</span><span class="o">.</span><span class="n">last_exc</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="k">return</span> <span class="bp">True</span>
+            
+</pre>
+</div>
+    
+    <ul class="pager">
+    </ul>
+
+        
+        
+
+
+    
+
+    </div>
+
+    </div>
+    </div>
+    <!--End of body content-->
+</div>
+<div class="footerbox">
+    Contents © 2013         <a href="mailto:takowl@gmail.com">Thomas Kluyver</a> - Powered by         <a href="http://nikola.ralsina.com.ar">Nikola</a>
+</div>
+
+            <script src="../assets/js/jquery-1.10.2.min.js" type="text/javascript"></script>
+            <script src="../assets/js/bootstrap.min.js" type="text/javascript"></script>
+        <script src="../assets/js/jquery.colorbox-min.js" type="text/javascript"></script>
+
+
+	
+<!-- Social buttons -->
+<div id="addthisbox" class="addthis_toolbox addthis_peekaboo_style addthis_default_style addthis_label_style addthis_32x32_style">
+<a class="addthis_button_more">Share</a>
+<ul><li><a class="addthis_button_facebook"></a>
+</li><li><a class="addthis_button_google_plusone_share"></a>
+</li><li><a class="addthis_button_linkedin"></a>
+</li><li><a class="addthis_button_twitter"></a>
+</li></ul>
+</div>
+<script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-4f7088a56bb93798"></script>
+<!-- End of social buttons -->
+
+
+    <script type="text/javascript">jQuery("a.image-reference").colorbox({rel:"gal",maxWidth:"100%",maxHeight:"100%",scalePhotos:true});
+    $(window).on('hashchange', function(){
+        if (location.hash && $(location.hash)[0]) {
+            $('body').animate({scrollTop: $(location.hash).offset().top - $('#navbar').outerHeight(true)*1.2 }, 1);
+        }
+    });
+    $(document).ready(function(){$(window).trigger('hashchange')});
+    </script>
+   
+   
+</body>
+</html>
