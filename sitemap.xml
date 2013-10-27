@@ -5,68 +5,43 @@
     xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
                         http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
  <url>
-  <loc>http://takluyver.github.io/</loc>
-  <lastmod>2013-09-14</lastmod>
-  <priority>0.5000</priority>
- </url>
- <url>
-  <loc>http://takluyver.github.io/2013/</loc>
-  <lastmod>2013-09-14</lastmod>
-  <priority>0.5000</priority>
- </url>
- <url>
   <loc>http://takluyver.github.io/2013/index.html</loc>
-  <lastmod>2013-09-14</lastmod>
-  <priority>0.5000</priority>
+  <lastmod>2013-10-27</lastmod>
  </url>
  <url>
   <loc>http://takluyver.github.io/archive.html</loc>
-  <lastmod>2013-09-14</lastmod>
-  <priority>0.5000</priority>
- </url>
- <url>
-  <loc>http://takluyver.github.io/categories/</loc>
-  <lastmod>2013-09-14</lastmod>
-  <priority>0.5000</priority>
+  <lastmod>2013-10-27</lastmod>
  </url>
  <url>
   <loc>http://takluyver.github.io/categories/index.html</loc>
-  <lastmod>2013-09-14</lastmod>
-  <priority>0.5000</priority>
- </url>
- <url>
-  <loc>http://takluyver.github.io/galleries/</loc>
-  <lastmod>2013-09-14</lastmod>
-  <priority>0.5000</priority>
+  <lastmod>2013-10-27</lastmod>
  </url>
  <url>
   <loc>http://takluyver.github.io/galleries/index.html</loc>
-  <lastmod>2013-09-14</lastmod>
-  <priority>0.5000</priority>
+  <lastmod>2013-10-27</lastmod>
+ </url>
+ <url>
+  <loc>http://takluyver.github.io/galleries/rss.xml</loc>
+  <lastmod>2013-10-27</lastmod>
  </url>
  <url>
   <loc>http://takluyver.github.io/index.html</loc>
-  <lastmod>2013-09-14</lastmod>
-  <priority>0.5000</priority>
- </url>
- <url>
-  <loc>http://takluyver.github.io/listings/</loc>
-  <lastmod>2013-09-14</lastmod>
-  <priority>0.5000</priority>
+  <lastmod>2013-10-27</lastmod>
  </url>
  <url>
   <loc>http://takluyver.github.io/listings/coromagic.py.html</loc>
-  <lastmod>2013-09-14</lastmod>
-  <priority>0.5000</priority>
+  <lastmod>2013-10-27</lastmod>
  </url>
  <url>
   <loc>http://takluyver.github.io/listings/index.html</loc>
-  <lastmod>2013-09-14</lastmod>
-  <priority>0.5000</priority>
+  <lastmod>2013-10-27</lastmod>
  </url>
  <url>
   <loc>http://takluyver.github.io/posts/writing-readable-python-coroutines.html</loc>
-  <lastmod>2013-09-14</lastmod>
-  <priority>0.5000</priority>
+  <lastmod>2013-10-27</lastmod>
+ </url>
+ <url>
+  <loc>http://takluyver.github.io/rss.xml</loc>
+  <lastmod>2013-10-27</lastmod>
  </url>
 </urlset>

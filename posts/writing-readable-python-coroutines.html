@@ -5,7 +5,6 @@
     
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="">
     <meta name="author" content="Thomas Kluyver">
     <title>Writing readable Python coroutines | Thomas' blog</title>
     
@@ -235,27 +234,27 @@ False
 
 <span class="k">class</span> <span class="nc">CoroutineWrapper</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="n">last_exc</span> <span class="o">=</span> <span class="bp">None</span>
-    
+
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">generator</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">gen</span> <span class="o">=</span> <span class="n">generator</span>
-        
+
         <span class="n">ready</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">gen</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">ready</span> <span class="ow">is</span> <span class="n">get_exception_context</span><span class="p">:</span>
             <span class="n">ready</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gen</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">ExceptionContext</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
         <span class="k">assert</span> <span class="n">ready</span> <span class="o">==</span> <span class="n">receive</span>
-    
+
     <span class="k">def</span> <span class="nf">send</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">arg</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">last_exc</span> <span class="o">=</span> <span class="bp">None</span>
-        
+
         <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gen</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">arg</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">res</span> <span class="ow">is</span> <span class="n">receive</span><span class="p">:</span>
             <span class="n">res</span> <span class="o">=</span> <span class="bp">None</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">assert</span> <span class="nb">next</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">gen</span><span class="p">)</span> <span class="ow">is</span> <span class="n">receive</span>
-        
+
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_exc</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_exc</span>
-        
+
         <span class="k">return</span> <span class="n">res</span>
 
 <span class="k">def</span> <span class="nf">coroutine</span><span class="p">(</span><span class="n">genfunc</span><span class="p">):</span>
@@ -263,26 +262,25 @@ False
     <span class="nd">@wraps</span><span class="p">(</span><span class="n">genfunc</span><span class="p">)</span>
     <span class="k">def</span> <span class="nf">wrapped</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">CoroutineWrapper</span><span class="p">(</span><span class="n">genfunc</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">))</span>
-    
+
     <span class="k">return</span> <span class="n">wrapped</span>
 
 <span class="k">class</span> <span class="nc">ExceptionContext</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">corowrapper</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">corowrapper</span> <span class="o">=</span> <span class="n">corowrapper</span>
-    
+
     <span class="k">def</span> <span class="nf">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">pass</span>
-    
+
     <span class="k">def</span> <span class="nf">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">type</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">tb</span><span class="p">):</span>
         <span class="k">if</span> <span class="nb">type</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="k">return</span>
         <span class="k">if</span> <span class="nb">type</span> <span class="ow">is</span> <span class="ne">GeneratorExit</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">False</span>
-        
+
         <span class="c"># Pass other exceptions to the wrapper, and silence them for now</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">corowrapper</span><span class="o">.</span><span class="n">last_exc</span> <span class="o">=</span> <span class="n">value</span>
         <span class="k">return</span> <span class="bp">True</span>
-            
 </pre>
 </div>
     
@@ -327,7 +325,7 @@ False
 
 
     <script type="text/javascript">jQuery("a.image-reference").colorbox({rel:"gal",maxWidth:"100%",maxHeight:"100%",scalePhotos:true});</script>
-
+    
 
 </body>
 </html>
