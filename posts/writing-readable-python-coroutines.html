@@ -51,7 +51,7 @@
             
                 
     <li>
-    <a href="writing-readable-python-coroutines.txt" id="sourcelink">Source</a>
+    <a href="writing-readable-python-coroutines.rst" id="sourcelink">Source</a>
     </li>
 
         </ul>
@@ -78,8 +78,14 @@
 
     </small>
     <hr>
-    <p>There's quite a bit of interest in using Python's coroutine features to support asynchronous code, such as the <a class="reference external" href="http://code.google.com/p/tulip/">tulip</a> effort. But with the exception of <a class="reference external" href="http://dabeaz.com/coroutines/">this excellent tutorial</a> by David Beazley, not much has been written about writing regular coroutines: functions that can be suspended and resumed, passing data in and out.</p>
-<p>Here's a simple example, a coroutine that repeatedly accepts a word and returns whether it has seen that word before:</p>
+    <p>Quick exercise: write a piece of code that, each time you pass it a word (a
+string), tells you if you've passed it that word before. If you're reading a
+post with a title like this, it shouldn't take you more than a few minutes. For
+bonus points, have an option to ignore case, so it counts 'parrot' and 'Parrot'
+as the same word.</p>
+<p>What did you go for? A function with a global variable (yuck!)? A class with a
+method? A closure?</p>
+<p>How about a coroutine? Here's what that would look like:</p>
 <pre class="code python literal-block">
 <span class="k">def</span> <span class="nf">have_seen</span><span class="p">(</span><span class="n">case_sensitive</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
     <span class="n">seen</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
@@ -93,7 +99,7 @@
         <span class="n">res</span> <span class="o">=</span> <span class="p">(</span><span class="n">word</span> <span class="ow">in</span> <span class="n">seen</span><span class="p">)</span>
         <span class="n">seen</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">word</span><span class="p">)</span>
 </pre>
-<p>We can use it like this:</p>
+<p>And here's how you would use it:</p>
 <pre class="literal-block">
 &gt;&gt;&gt; hs = have_seen()
 &gt;&gt;&gt; next(hs)  # prime it
@@ -104,12 +110,25 @@ False
 &gt;&gt;&gt; hs.send('hello')
 True
 </pre>
-<p>This code isn't very clear, though:</p>
+<p>Coroutines in Python are based on the generator machinery - see the <tt class="docutils literal">yield</tt>
+keyword in there? <a class="reference external" href="http://www.python.org/dev/peps/pep-0342/">PEP 342</a>,
+"Coroutines via Enhanced Generators", added the necessary features to Python
+2.5, but it's not a very well known part of the language. And it's not hard to
+see why: the code above isn't as clear as it should be:</p>
 <ul class="simple">
 <li>Emitting and receiving a value happen in the same yield expression. So rather than yielding the response at the bottom of the loop, we have to store it in a variable and jump back to the top of the loop.</li>
-<li>The coroutine has to emit a value before it can receive one, even though there's nothing it really wants to emit. That's why we set <tt class="docutils literal">res = None</tt> before the loop, and why the caller has to prime it by calling <tt class="docutils literal">next(hs)</tt> before using it. It's easy to write a decorator that calls <tt class="docutils literal">next</tt> for you, but that doesn't make the code inside the coroutine any clearer.</li>
+<li>The coroutine has to emit a value before it can receive one, even though</li>
 </ul>
-<p>Is there a clearer way to do it? Using the coromagic module below, we can separate sending and receiving values:</p>
+<div class="system-message">
+<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">&lt;string&gt;</tt>, line 45)</p>
+Bullet list ends without a blank line; unexpected unindent.</div>
+<p>there's nothing it really wants to emit. That's why we set <tt class="docutils literal">res = None</tt> before
+the loop, and why the caller has to prime it by calling <tt class="docutils literal">next(hs)</tt> before
+using it. It's easy to write a decorator that calls <tt class="docutils literal">next</tt> for you, but that
+doesn't make the code inside the coroutine any clearer.</p>
+<p>So the standard Python syntax is rather awkward. But with a bit of wrapper code,
+we can make it clearer, without having to switch to another language. The trick
+is separating sending a value from receiving one:</p>
 <pre class="code python literal-block">
 <span class="kn">from</span> <span class="nn">coromagic</span> <span class="kn">import</span> <span class="n">coroutine</span><span class="p">,</span> <span class="n">receive</span>
 
@@ -125,12 +144,20 @@ True
         <span class="k">yield</span> <span class="p">(</span><span class="n">word</span> <span class="ow">in</span> <span class="n">seen</span><span class="p">)</span>
         <span class="n">seen</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">word</span><span class="p">)</span>
 </pre>
-<p>We no longer need the <cite>res</cite> variable. Instead, we alternate between two uses of yield: a receiving yield, where we send the wrapper a token to indicate that we're ready for a new value, and a sending yield, where we don't expect to get a value back. The caller can use this in exactly the same way as the original coroutine, except that the wrapper primes it automatically, so there's no need to call <cite>next(hs)</cite>.</p>
-<p>For now, the wrapper expects a receiving yield first, and at most one sending yield after each receiving yield. These aren't hard limitations, though: I just haven't worked out how other patterns would work for the caller. If a receiving yield isn't followed by a sending yield, <cite>None</cite> is returned to the caller, just like a function without a return statement.</p>
-<p><em>N.B. This is an idea, not a finished solution. For all I know, this design might be like goto—superficially attractive, but a horrible mess with any serious code. For instance, I haven't really thought about delegating to another coroutine in the sending vs. the receiving phase. Your thoughts and suggestions are welcome.</em></p>
+<p>We no longer need the <cite>res</cite> variable. Instead, we alternate between two uses of
+yield: a receiving yield, where we send the wrapper a token to indicate that
+we're ready for a new value, and a sending yield, where we don't expect to get a
+value back. The caller can use this in exactly the same way as the original
+coroutine, except that the wrapper primes it automatically, so there's no need
+to call <tt class="docutils literal">next(hs)</tt>.</p>
+<p>The wrapper expects a receiving yield first, and at most one sending yield after
+each receiving yield. If a receiving yield is followed by another receiving
+yield, without a sending yield inbetween, <tt class="docutils literal">None</tt> is returned to the caller,
+just like a function without a return statement.</p>
 <div class="section" id="handling-exceptions">
 <h2>Handling exceptions</h2>
-<p>If either of our coroutines above raises an exception, we can't use that coroutine again:</p>
+<p>If either of our coroutines above raises an exception, we can't keep using that
+coroutine:</p>
 <pre class="literal-block">
 &gt;&gt;&gt; hs.send(12)
 Traceback (most recent call last):
@@ -143,7 +170,8 @@ Traceback (most recent call last):
   File "&lt;stdin&gt;", line 1, in &lt;module&gt;
 StopIteration
 </pre>
-<p>I've got a solution of sorts for that, although it still feels a bit awkward. The coroutine can request a context manager to catch expressions:</p>
+<p>I've got a solution of sorts for that, although it still feels a bit awkward.
+The coroutine can request a context manager to catch exceptions:</p>
 <pre class="code python literal-block">
 <span class="kn">from</span> <span class="nn">coromagic</span> <span class="kn">import</span> <span class="n">get_exception_context</span>
 
@@ -177,49 +205,52 @@ False
 </pre>
 <p>Now the error doesn't stop us processing valid input afterwards.</p>
 </div>
-<div class="section" id="why-not-use-queues">
-<h2>Why not use queues?</h2>
-<p>The pattern of sending and receiving is reminiscent of writing a thread with input and output queues, and waiting for values on those queues. But unlike a thread, there are no race conditions, and no need to shut it down safely. Calling the cororoutine is just like calling a function: it runs, returns a value, and the calling code carries on.</p>
-</div>
-<div class="section" id="why-do-you-need-a-coroutine-anyway">
-<h2>Why do you need a coroutine anyway?</h2>
-<p>The examples above could easily have been written as a closure or a class. Coroutines come into their own when they can be suspended at different points in the code, representing different states. To do the same thing without a coroutine, each call would start by looking up the current state in an if/elif statement or a dictionary to decide what to do.</p>
-<p>It's hard to come up with trivial examples of that, but here's an example <a class="reference external" href="https://github.com/ipython/ipython/blob/08de7c607f60010852ed98943002e2d3f09f3baa/IPython/core/inputtransformer.py#L351">from the IPython codebase</a>, rewritten using coromagic. It removes the prompts from example code copied and pasted into IPython. It handles the first two lines of the block in a <em>detection state</em>, then switches to either a <em>prompt-stripping state</em> or a <em>no-op state</em> until it gets a reset signal (<tt class="docutils literal">None</tt>):</p>
+<div class="section" id="who-cares-about-coroutines">
+<h2>Who cares about coroutines?</h2>
+<p>I like discovering obscure corners of knowledge, so I care for starters. But
+there are cases where coroutines can be the clearest way to write something.</p>
+<p>The <tt class="docutils literal">have_seen</tt> example could easily be written with a class or a closure.
+Coroutines come into their own for making state machines. With a class or a
+closure, the state has to be stored in a variable, and you need a lookup table
+to decide what to do in each state. A coroutine can store the state as the point
+where its code is executing.</p>
+<p>It's hard to come up with an example of this that's both realistic and
+short, but here's my attempt. We're writing a plugin for a chat
+application, which lets any chatter say "password foo", silencing everyone until
+someone guesses "foo". The application just passes us each message, and expects
+a True/False response saying whether it should be broadcast.</p>
 <pre class="code python literal-block">
 <span class="nd">@coroutine</span>
-<span class="k">def</span> <span class="nf">_strip_prompts</span><span class="p">(</span><span class="n">prompt_re</span><span class="p">):</span>
-    <span class="sd">"""Remove matching input prompts from a block of input."""</span>
+<span class="k">def</span> <span class="nf">password_game</span><span class="p">():</span>
     <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
-        <span class="c"># First line of cell</span>
-        <span class="n">line</span> <span class="o">=</span> <span class="p">(</span><span class="k">yield</span> <span class="n">receive</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">line</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="k">continue</span>
-        <span class="n">out</span><span class="p">,</span> <span class="n">n1</span> <span class="o">=</span> <span class="n">prompt_re</span><span class="o">.</span><span class="n">subn</span><span class="p">(</span><span class="s">''</span><span class="p">,</span> <span class="n">line</span><span class="p">,</span> <span class="n">count</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-        <span class="k">yield</span> <span class="n">out</span>
+        <span class="c"># Normal chatting</span>
+        <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="k">yield</span> <span class="n">receive</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">msg</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">"password "</span><span class="p">):</span>
+                <span class="n">password</span> <span class="o">=</span> <span class="n">msg</span><span class="p">[</span><span class="mi">9</span><span class="p">:]</span>
+                <span class="k">yield</span> <span class="bp">False</span>
+                <span class="k">break</span>
+            <span class="k">yield</span> <span class="bp">True</span>  <span class="c"># Broadcast</span>
 
-        <span class="c"># Second line of cell, because people often copy from just after the</span>
-        <span class="c"># first prompt, so we might not see it in the first line.</span>
-        <span class="n">line</span> <span class="o">=</span> <span class="p">(</span><span class="k">yield</span> <span class="n">receive</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">line</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="k">continue</span>
-        <span class="n">out</span><span class="p">,</span> <span class="n">n2</span> <span class="o">=</span> <span class="n">prompt_re</span><span class="o">.</span><span class="n">subn</span><span class="p">(</span><span class="s">''</span><span class="p">,</span> <span class="n">line</span><span class="p">,</span> <span class="n">count</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-        <span class="k">yield</span> <span class="n">out</span>
-
-        <span class="n">line</span> <span class="o">=</span> <span class="p">(</span><span class="k">yield</span> <span class="n">receive</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">n1</span> <span class="ow">or</span> <span class="n">n2</span><span class="p">:</span>
-            <span class="c"># Found the input prompt in the first two lines - check for it in</span>
-            <span class="c"># the rest of the cell as well.</span>
-            <span class="k">while</span> <span class="n">line</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
-                <span class="k">yield</span> <span class="n">prompt_re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s">''</span><span class="p">,</span> <span class="n">line</span><span class="p">,</span> <span class="n">count</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-                <span class="n">line</span> <span class="o">=</span> <span class="p">(</span><span class="k">yield</span> <span class="n">receive</span><span class="p">)</span>
-
-        <span class="k">else</span><span class="p">:</span>
-            <span class="c"># Prompts not in input - wait for reset</span>
-            <span class="k">while</span> <span class="n">line</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
-                <span class="k">yield</span> <span class="n">line</span>
-                <span class="n">line</span> <span class="o">=</span> <span class="p">(</span><span class="k">yield</span> <span class="n">receive</span><span class="p">)</span>
+        <span class="c"># Waiting for someone to guess the password</span>
+        <span class="k">while</span> <span class="p">(</span><span class="k">yield</span> <span class="n">receive</span><span class="p">)</span> <span class="o">!=</span> <span class="n">password</span><span class="p">:</span>
+            <span class="k">yield</span> <span class="bp">False</span> <span class="c"># Don't send messages</span>
+        <span class="k">yield</span> <span class="bp">True</span>   <span class="c"># Show everyone the password once it has been guessed</span>
 </pre>
-<p>This is actually a bit longer than the code without using coromagic, but I think it's clearer what's going on.</p>
+<p>In IPython, we have some coroutines for input processing. For instance, the
+transformer to strip prompts from pasted code processes the first two lines in a
+prompt-detection state. Then it moves into a prompt-stripping state if it
+detected a prompt, or a no-op state if it didn't.</p>
+<p>The pattern of sending and receiving is also reminiscent of writing a thread
+with input and output queues, and waiting for values on those queues. But
+threads are messy: you have to deal with synchronisation, and with shutting them
+down safely. Calling a cororoutine is as deterministic as calling a function:
+it runs, returns a value, and the calling code carries on. Of course, that means
+that coroutines themselves don't run in parallel. But you can use them to build
+clever things like <a class="reference external" href="http://code.google.com/p/tulip/">tulip</a>, which will become
+the asyncio module in Python 3.4. Tulip can suspend one coroutine and run others
+while it waits for data, and then resume it when the data it needs is ready.</p>
+<p>The best resource on coroutines in Python is <a class="reference external" href="http://dabeaz.com/coroutines/">this course</a> by David Beazley.</p>
 </div>
 <div class="section" id="coromagic-source-code">
 <h2>Coromagic source code</h2>
