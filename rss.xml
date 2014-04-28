@@ -1,5 +1,88 @@
 <?xml version="1.0" encoding="utf-8"?>
-<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/"><channel><title>Codel</title><link>http://takluyver.github.io/</link><description>Thoughts about code</description><atom:link href="http://takluyver.github.io/rss.xml" type="application/rss+xml" rel="self"></atom:link><language>en</language><lastBuildDate>Sun, 10 Nov 2013 19:24:00 GMT</lastBuildDate><generator>nikola</generator><docs>http://blogs.law.harvard.edu/tech/rss</docs><item><title>Readable Python coroutines</title><link>http://takluyver.github.io/posts/readable-python-coroutines.html</link><description>&lt;p&gt;Quick exercise: write a piece of code that, each time you pass it a word (a
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/"><channel><title>Codel</title><link>http://takluyver.github.io/</link><description>Thoughts about code</description><atom:link href="http://takluyver.github.io/rss.xml" type="application/rss+xml" rel="self"></atom:link><language>en</language><lastBuildDate>Sun, 27 Apr 2014 22:01:24 GMT</lastBuildDate><generator>nikola</generator><docs>http://blogs.law.harvard.edu/tech/rss</docs><item><title>ASTsearch - code searching that knows about code</title><link>http://takluyver.github.io/posts/astsearch-code-searching-that-knows-about-code.html</link><description>&lt;p&gt;This weekend's hack is a tool for searching Python code.&lt;/p&gt;
+&lt;p&gt;&lt;a class="reference external" href="https://github.com/takluyver/astsearch"&gt;ASTsearch source code on Github&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;What's wrong with grep, you might ask? Let's try to find every division in
+IPython's codebase:&lt;/p&gt;
+&lt;pre class="literal-block"&gt;
+$ grep --include "*.py" -rF "/" .
+config/loader.py:        after applying any insert / extend / update changes
+config/configurable.py:                    # ConfigValue is a wrapper for using append / update on containers
+config/tests/test_loader.py:        argv = ['--a=~/1/2/3', '--b=~', '--c=~/', '--d="~/"']
+config/tests/test_loader.py:        self.assertEqual(config.a, os.path.expanduser('~/1/2/3'))
+config/tests/test_loader.py:        self.assertEqual(config.c, os.path.expanduser('~/'))
+config/tests/test_loader.py:        self.assertEqual(config.d, '~/')
+...
+&lt;/pre&gt;
+&lt;p&gt;In all, it finds 1685 lines, and very few of them are actual division. You could
+write a regex that tries to ignore comments and strings, but &lt;a class="reference external" href="http://regex.info/blog/2006-09-15/247"&gt;now you have two
+problems&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Let's do the same with ASTsearch:&lt;/p&gt;
+&lt;pre class="literal-block"&gt;
+$ astsearch "?/?"
+core/oinspect.py
+ 646|        shalf = int((string_max -5)/2)
+
+core/ultratb.py
+1254|        return h / i
+
+core/page.py
+ 347|        whalf = int((width -5)/2)
+...
+&lt;/pre&gt;
+&lt;p&gt;The output is 89 lines, and when spacing and filenames are removed, there are
+46 results, all of which represent division operations.&lt;/p&gt;
+&lt;p&gt;In this case, grep produced a lot of false positives. In other cases, it will
+have false negatives—results that you wanted but didn't find. &lt;tt class="docutils literal"&gt;a=1&lt;/tt&gt; won't
+match &lt;tt class="docutils literal"&gt;a= 1&lt;/tt&gt;, and &lt;tt class="docutils literal"&gt;"this"&lt;/tt&gt; won't match &lt;tt class="docutils literal"&gt;'this'&lt;/tt&gt;. For simple cases, regexes
+can help (&lt;tt class="docutils literal"&gt;&lt;span class="pre"&gt;a\s*=\s*1&lt;/span&gt;&lt;/tt&gt;), but they soon get unwieldy. ASTsearch is insensitive
+to how you format your code: even statements split over several lines are easy
+to find.&lt;/p&gt;
+&lt;div class="section" id="how-does-it-work"&gt;
+&lt;h2&gt;How does it work?&lt;/h2&gt;
+&lt;p&gt;The string pattern—&lt;tt class="docutils literal"&gt;&lt;span class="pre"&gt;?/?&lt;/span&gt;&lt;/tt&gt; in the example above—is turned into an AST pattern.
+ASTs, or Abstract Syntax Trees, are a structured representation of a formal
+language such as Python source code.&lt;/p&gt;
+&lt;p&gt;&lt;tt class="docutils literal"&gt;?&lt;/tt&gt; is a wildcard, so &lt;tt class="docutils literal"&gt;&lt;span class="pre"&gt;?/?&lt;/span&gt;&lt;/tt&gt; means "anything divided by anything". I picked
+&lt;tt class="docutils literal"&gt;?&lt;/tt&gt; for this because it's not used in Python syntax, so it doesn't stop you
+writing more specific search patterns.&lt;/p&gt;
+&lt;p&gt;Some more patterns:&lt;/p&gt;
+&lt;ul class="simple"&gt;
+&lt;li&gt;&lt;tt class="docutils literal"&gt;a = ?&lt;/tt&gt; - Something is assigned to &lt;tt class="docutils literal"&gt;a&lt;/tt&gt;&lt;/li&gt;
+&lt;li&gt;&lt;tt class="docutils literal"&gt;class &lt;span class="pre"&gt;?(TemplateExporter):&lt;/span&gt; ?&lt;/tt&gt; - A subclass of TemplateExporter&lt;/li&gt;
+&lt;li&gt;&lt;tt class="docutils literal"&gt;for ? in &lt;span class="pre"&gt;?:&lt;/span&gt; ? \nelse: ?&lt;/tt&gt; - A for loop with an &lt;tt class="docutils literal"&gt;else&lt;/tt&gt; clause&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Then it walks the directory, parsing each file with a &lt;tt class="docutils literal"&gt;.py&lt;/tt&gt; extension using
+Python's built in parser. The standard library &lt;a class="reference external" href="https://docs.python.org/3/library/ast.html"&gt;ast module&lt;/a&gt; contains the tools to parse the
+code and walk the AST, and &lt;a class="reference external" href="https://pypi.python.org/pypi/astcheck"&gt;astcheck&lt;/a&gt;,
+another tool I wrote, can compare AST nodes against a template.&lt;/p&gt;
+&lt;p&gt;Besides the command line interface, you can also use ASTsearch as a Python
+module (&lt;tt class="docutils literal"&gt;import astsearch&lt;/tt&gt;). It's possible to define complex search patterns
+in Python code that can't be written at the command line. Documentation is
+coming soon.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="section" id="what-s-the-catch"&gt;
+&lt;h2&gt;What's the catch?&lt;/h2&gt;
+&lt;p&gt;ASTsearch only works on Python files, and Python files that are entirely valid
+syntax (that's Python 3 syntax for now). If just the last line can't be parsed,
+it won't find any matches in that file.&lt;/p&gt;
+&lt;p&gt;It's slower than grep, because what it's doing is much more complex, and grep is
+&lt;a class="reference external" href="http://lists.freebsd.org/pipermail/freebsd-current/2010-August/019310.html"&gt;highly optimised&lt;/a&gt;.
+But Python's parser is doing most of the hard work, and that's written in C. On
+my laptop, scanning the IPython codebase (about 100k lines of code) takes about
+3.5 seconds—definitely not instant, but far faster than I can think about even a
+couple of results.&lt;/p&gt;
+&lt;p&gt;There are search patterns you can't express at the command line. For instance,
+you can't match function calls with a specific number of arguments (but you can
+find function &lt;em&gt;definitions&lt;/em&gt; with a given number of arguments: &lt;tt class="docutils literal"&gt;def &lt;span class="pre"&gt;?(?,&lt;/span&gt; &lt;span class="pre"&gt;?):&lt;/span&gt; ?&lt;/tt&gt;).
+I might extend the pattern mini-language once I've got a feel for what would be
+useful.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="section" id="how-do-i-install-it"&gt;
+&lt;h2&gt;How do I install it?&lt;/h2&gt;
+&lt;pre class="literal-block"&gt;
+pip install astsearch
+&lt;/pre&gt;
+&lt;/div&gt;</description><guid>http://takluyver.github.io/posts/astsearch-code-searching-that-knows-about-code.html</guid><pubDate>Sun, 27 Apr 2014 17:39:44 GMT</pubDate></item><item><title>Readable Python coroutines</title><link>http://takluyver.github.io/posts/readable-python-coroutines.html</link><description>&lt;p&gt;Quick exercise: write a piece of code that, each time you pass it a word (a
 string), tells you if you've passed it that word before. If you're reading a
 post with a title like this, it shouldn't take you more than a few minutes. For
 bonus points, have an option to ignore case, so it counts 'parrot' and 'Parrot'
