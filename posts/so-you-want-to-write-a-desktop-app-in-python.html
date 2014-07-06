@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html prefix="
+og: http://ogp.me/ns#
+article: http://ogp.me/ns/article#
+" lang="en">
+    <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <title>So you want to write a desktop app in Python | Codel</title>
+
+                <link href="../assets/css/all-nocdn.css" rel="stylesheet" type="text/css">
+
+                <link rel="alternate" type="application/rss+xml" title="RSS" href="../rss.xml">
+
+      <link rel="canonical" href="http://takluyver.github.io/posts/so-you-want-to-write-a-desktop-app-in-python.html">
+
+
+
+    
+        <!--[if lt IE 9]><script src="/assets/js/html5.js"></script><![endif]-->
+
+    
+<link rel="stylesheet" type="text/css" href="../assets/css/custom.css">
+
+
+    
+    <meta name="author" content="Thomas Kluyver">
+            <meta name="og:title" content="So you want to write a desktop app in Python">
+        <meta name="og:url" content="http://takluyver.github.io/posts/so-you-want-to-write-a-desktop-app-in-python.html">
+            <meta name="og:description" content="This is an overview of the best tools and the best resources for building
+desktop applications in Python.
+First things first. You can build great desktop applications in Python, and some
+are widely us">
+        <meta name="og:site_name" content="Codel">
+        <meta name="og:type" content="article">
+
+    
+    
+
+</head>
+<body>
+
+<!-- Menubar -->
+
+<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container">
+<!-- This keeps the margins nice -->
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="http://takluyver.github.io/">
+
+                <span id="blog-title">Codel</span>
+            </a>
+        </div>
+<!-- /.navbar-header -->
+        <div class="collapse navbar-collapse navbar-ex1-collapse">
+            <ul class="nav navbar-nav">
+                                <li>
+<a href="../archive.html">Archives</a>
+                </li>
+<li>
+<a href="../categories/index.html">Tags</a>
+                </li>
+<li>
+<a href="../rss.xml">RSS</a>
+
+                
+            </li>
+</ul>
+
+            <ul class="nav navbar-nav navbar-right">
+                
+            </ul>
+        </div>
+<!-- /.navbar-collapse -->
+    </div>
+<!-- /.container -->
+</nav>
+
+<!-- End of Menubar -->
+
+<div class="container">
+    <div class="body-content">
+        <!--Body content-->
+        <div class="row">
+            
+<article class="post-text h-entry hentry postpage" itemscope="itemscope" itemtype="http://schema.org/Article">
+        <header>
+            <h1 class="p-name entry-title" itemprop="headline name"><a href="#" class="u-url">So you want to write a desktop app in Python</a></h1>
+
+        <div class="metadata">
+            <p class="byline author vcard"><span class="byline-name fn">Thomas Kluyver</span></p>
+            <p class="dateline"><a href="#" rel="bookmark"><time class="published dt-published" datetime="2014-06-16T23:55:03+00:00" itemprop="datePublished" title="Publication date">2014-06-16 23:55</time></a></p>
+                <p class="commentline">            <a href="so-you-want-to-write-a-desktop-app-in-python.html#disqus_thread" data-disqus-identifier="cache/posts/so-you-want-to-write-a-desktop-app-in-python.html">Comments</a>
+
+
+                    </p>
+<p class="sourceline"><a href="so-you-want-to-write-a-desktop-app-in-python.rst" id="sourcelink">Source</a></p>
+
+        </div>
+        
+    </header>
+
+    <div class="e-content entry-content" itemprop="articleBody text">
+    <p>This is an overview of the best tools and the best resources for building
+desktop applications in Python.</p>
+<p>First things first. You can build great desktop applications in Python, and some
+are widely used (like Dropbox). But you'll have to find your own way much more
+than you would using Microsoft's or Apple's SDKs. The upside is that, with a bit
+of legwork to package it appropriately, it's quite feasible to write a Python
+application that works on all the major platforms.</p>
+<div class="section" id="gui-toolkits">
+<h2>GUI toolkits</h2>
+<p>The first thing you'll need to choose is a GUI toolkit.</p>
+<img alt="Qt logo" class="align-right" src="../images/QtLogo.png">
+<ul class="simple">
+<li>For traditional desktop UIs, <strong>Qt</strong> is a clear winner. It's powerful, looks
+native on all the major platforms, and has probably the biggest community.
+There are two different Python bindings: <a class="reference external" href="http://www.riverbankcomputing.com/software/pyqt/intro">PyQt</a>
+is older and more mature, but it's only free if your application is open source
+(<a class="reference external" href="http://www.riverbankcomputing.com/software/pyqt/license">licensing</a>), while
+<a class="reference external" href="http://qt-project.org/wiki/PySide">PySide</a> is newer and more permissively
+licensed (LGPL). I refer to the <a class="reference external" href="http://qt-project.org/doc/">main Qt docs</a>
+a lot - the C++ examples mostly translate to Python quite well - but both <a class="reference external" href="http://pyqt.sourceforge.net/Docs/PyQt4/index.html">PyQt's</a> and <a class="reference external" href="http://qt-project.org/wiki/PySideDocumentation">PySide's docs</a> contain some useful information.
+<a class="reference external" href="http://qt-project.org/doc/qt-4.8/designer-manual.html">Qt Designer</a> is
+a drag and drop interface to design your UI; you can compile its .ui files
+to Python modules with the pyuic command line tool.</li>
+</ul>
+<div class="figure">
+<img alt="/images/Qt_Designer.png" src="../images/Qt_Designer.png">
+<p class="caption">Qt Designer in action</p>
+</div>
+<img alt="Kivy logo" class="align-right" src="../images/kivy-logo.png" style="height: 64px;">
+<ul class="simple">
+<li>For attractive, tablet-style interfaces, <strong>Kivy</strong> is the
+right choice. It's a fairly young but promising system. If you want to bring
+your application to tablets and smartphones, then Kivy is the only option
+that I'm aware of. <a class="reference external" href="http://kivy.org/">More info</a>
+</li>
+<li>When you want a basic GUI and don't care about aesthetics, <strong>Tkinter</strong> is a
+simple option. It's installed as part of Python. Python's own <a class="reference external" href="https://docs.python.org/3/library/tkinter.html">tkinter documentation</a> is rather minimal, but it
+links to a bunch of other resources. <a class="reference external" href="http://effbot.org/tkinterbook/">This site</a>
+is my favourite - it hasn't been updated in years, but then neither has Tkinter
+(except that in Python 3, you <tt class="docutils literal">import tkinter</tt> rather than <tt class="docutils literal">import Tkinter</tt>).</li>
+<li>
+<a class="reference external" href="http://pygame.org/">pygame</a> is popular for building simple 2D games. There
+are also frameworks for 3D graphics (<a class="reference external" href="http://www.pyglet.org/">pyglet</a>,
+<a class="reference external" href="https://www.panda3d.org/">Panda3d</a>), but I don't know much about them.</li>
+<li>An increasingly popular option is to write your application as a local web
+server, and build the UI in HTML and Javascript. This lets you use Python's
+large ecosystem of web frameworks and libraries, but it's harder to integrate
+with desktop conventions for things like opening files and window management.
+<a class="reference external" href="https://code.google.com/p/cefpython/">CEF Python</a> lets you make a window
+for your application, based on Google Chrome, but I haven't tried that.</li>
+</ul>
+<p>A couple of alternatives I wouldn't recommend unless you have a reason to prefer
+them: <strong>GTK</strong> is popular on Linux, but it
+looks ugly on other platforms. The older <a class="reference external" href="http://www.pygtk.org/">pygtk</a>
+bindings have excellent documentation; the newer <a class="reference external" href="https://wiki.gnome.org/Projects/PyGObject">PyGObject</a>
+system, which supports recent versions of GTK and Python, doesn't (though it's
+getting better). <strong>wx</strong> seems to have a good community, but development is slow,
+and new projects that could have used it now mostly seem to pick Qt.</p>
+</div>
+<div class="section" id="packaging-and-distribution">
+<h2>Packaging and Distribution</h2>
+<p>This is probably the roughest part of making an application in Python. You can
+easily distribute tools for developers as Python packages to be installed using
+pip, but end users don't generally have Python and pip already set up. Python
+packages also can't depend on something like Qt. There are a number of ways to
+package your application and its dependencies:</p>
+<ul class="simple">
+<li>
+<a class="reference external" href="http://pynsist.readthedocs.org/">Pynsist</a>, my own project, makes
+a Windows installer which installs a version of Python that you specify, and
+then installs your application. Unlike the other tools listed here, it doesn't
+try to 'freeze' your application into an exe, but makes shortcuts which launch
+.py files. This avoids certain kinds of bugs.</li>
+<li>
+<a class="reference external" href="http://cx-freeze.sourceforge.net/">cx_Freeze</a> is a freeze tool:
+it makes an executable out of your application. It works on Windows, Mac and
+Linux, but only produces the executable for the platform you run it on (you
+can't make a Windows exe on Linux, for example).
+It can make simple packages (.msi for Windows, .dmg for Mac, .rpm for Linux),
+or you can feed its output into <a class="reference external" href="http://nsis.sourceforge.net/">NSIS</a> or
+<a class="reference external" href="http://www.jrsoftware.org/isinfo.php">Inno Setup</a> to have more control over
+building a Windows installer.</li>
+<li>
+<a class="reference external" href="http://www.pyinstaller.org/">PyInstaller</a> is similar to cx_Freeze.
+It doesn't yet support Python 3, but it does have the ability to produce a
+'single file' executable.</li>
+<li>
+<a class="reference external" href="http://pythonhosted.org/py2app/">py2app</a> is a freeze tool specifically
+for building Mac .app bundles.</li>
+<li>
+<a class="reference external" href="http://www.py2exe.org/">py2exe</a> is a Windows-only freeze tool.
+Development stopped for a long time, but at the time of writing there is some
+recent activity on it.</li>
+</ul>
+<div class="section" id="linux-packaging">
+<h3>Linux packaging</h3>
+<p>Although some of the freeze tools can build Linux binaries, the preferred way to
+distribute software is to make a package containing just your application, which
+has <em>dependencies</em> on Python and the libraries your application uses. So your
+package doesn't contain everything it needs, but it tells the package manager
+what other pieces it needs installed.</p>
+<p>Unfortunately, the procedures for preparing these are pretty complex, and Linux
+distributions still don't have a common package format. The main ones are deb
+packages, used by Debian, Ubuntu and Mint, and rpm packages, used by Fedora and
+Red Hat. I don't know of a good, simple guide to packaging Python applications
+for either - if you find one or write one, let me know.</p>
+<p>You can get users to download and install your package, but if you want it to
+receive updates through the package manager, you'll need to host it in a
+repository. Submitting your package to the distribution's main repositories makes
+it easiest for users to install, but it has to meet the distro's quality
+standards, and you generally can't push new feature releases to people except when
+they upgrade the whole distribution. Some distributions offer hosting for
+personal repos: Ubuntu's PPAs, or Fedora's Fedorapeople repositories. You can
+also set up a repository on your own server.</p>
+<p>If you don't want to think about all that, just make a tarball of your application,
+and explain to Linux users next to the download what it requires.</p>
+</div>
+</div>
+<div class="section" id="miscellaneous">
+<h2>Miscellaneous</h2>
+<ul class="simple">
+<li>
+<strong>Threading</strong>: If your application does anything taking longer than about a tenth
+of a second, you should do it in a background thread, so your UI doesn't freeze
+up. Be sure to only interact with GUI elements from the main thread, or you
+can get segfaults. Python's GIL isn't a big issue here: the UI thread shouldn't
+need much Python processing time.</li>
+<li>
+<strong>Updates</strong>: <a class="reference external" href="https://pypi.python.org/pypi/esky">Esky</a> is a framework for
+updating frozen Python applications. I haven't tried it, but it looks interesting.</li>
+</ul>
+</div>
+    </div>
+    <aside class="postpromonav">
+    <nav>
+    
+            <ul class="pager">
+            <li class="previous">
+                <a href="astsearch-code-searching-that-knows-about-code.html" rel="prev" title="ASTsearch - code searching that knows about code">Previous post</a>
+            </li>
+        </ul>
+
+    </nav>
+    </aside>
+        <section class="comments">
+        <h2>Comments</h2>
+                        <div id="disqus_thread"></div>
+        <script>
+        var disqus_shortname ="takluyverblog",
+            disqus_url="http://takluyver.github.io/posts/so-you-want-to-write-a-desktop-app-in-python.html",
+        disqus_title="So you want to write a desktop app in Python",
+        disqus_identifier="cache/posts/so-you-want-to-write-a-desktop-app-in-python.html",
+        disqus_config = function () {
+            this.language = "";
+        };
+        (function() {
+            var dsq = document.createElement('script'); dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a>
+</noscript>
+    <a href="//disqus.com" class="dsq-brlink" rel="nofollow">Comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+        </section>
+    
+</article>
+               <script>var disqus_shortname="takluyverblog";(function(){var a=document.createElement("script");a.async=true;a.src="//"+disqus_shortname+".disqus.com/count.js";(document.getElementsByTagName("head")[0]||document.getElementsByTagName("body")[0]).appendChild(a)}());</script>
+
+
+        </div>
+        <!--End of body content-->
+
+        <footer>
+            Contents © 2014         <a href="mailto:takowl@gmail.com">Thomas Kluyver</a> - Powered by         <a href="http://nikola.ralsina.com.ar">Nikola</a>
+            
+        </footer>
+    </div>
+</div>
+
+            <script src="../assets/js/all-nocdn.js"></script>
+    
+<!-- Social buttons -->
+<div id="addthisbox" class="addthis_toolbox addthis_peekaboo_style addthis_default_style addthis_label_style addthis_32x32_style">
+<a class="addthis_button_more">Share</a>
+<ul>
+<li>
+<a class="addthis_button_facebook"></a>
+</li>
+<li>
+<a class="addthis_button_google_plusone_share"></a>
+</li>
+<li>
+<a class="addthis_button_linkedin"></a>
+</li>
+<li>
+<a class="addthis_button_twitter"></a>
+</li>
+</ul>
+</div>
+<script src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-4f7088a56bb93798"></script>
+<!-- End of social buttons -->
+
+
+    <script>jQuery("a.image-reference").colorbox({rel:"gal",maxWidth:"100%",maxHeight:"100%",scalePhotos:true});</script>
+
+
+</body>
+</html>

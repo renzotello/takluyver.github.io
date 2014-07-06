@@ -1,5 +1,127 @@
 <?xml version="1.0" encoding="utf-8"?>
-<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/"><channel><title>Codel</title><link>http://takluyver.github.io/</link><description>Thoughts about code</description><atom:link href="http://takluyver.github.io/rss.xml" type="application/rss+xml" rel="self"></atom:link><language>en</language><lastBuildDate>Sun, 27 Apr 2014 22:45:29 GMT</lastBuildDate><generator>nikola</generator><docs>http://blogs.law.harvard.edu/tech/rss</docs><item><title>ASTsearch - code searching that knows about code</title><link>http://takluyver.github.io/posts/astsearch-code-searching-that-knows-about-code.html</link><description>&lt;p&gt;This weekend's hack is a tool for searching Python code.&lt;/p&gt;
+<rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/"><channel><title>Codel</title><link>http://takluyver.github.io/</link><description>Thoughts about code</description><language>en</language><lastBuildDate>Fri, 04 Jul 2014 12:07:04 GMT</lastBuildDate><generator>http://getnikola.com/</generator><docs>http://blogs.law.harvard.edu/tech/rss</docs><item><title>So you want to write a desktop app in Python</title><link>http://takluyver.github.io/posts/so-you-want-to-write-a-desktop-app-in-python.html</link><dc:creator>Thomas Kluyver</dc:creator><description>&lt;p&gt;This is an overview of the best tools and the best resources for building
+desktop applications in Python.&lt;/p&gt;
+&lt;p&gt;First things first. You can build great desktop applications in Python, and some
+are widely used (like Dropbox). But you'll have to find your own way much more
+than you would using Microsoft's or Apple's SDKs. The upside is that, with a bit
+of legwork to package it appropriately, it's quite feasible to write a Python
+application that works on all the major platforms.&lt;/p&gt;
+&lt;div class="section" id="gui-toolkits"&gt;
+&lt;h2&gt;GUI toolkits&lt;/h2&gt;
+&lt;p&gt;The first thing you'll need to choose is a GUI toolkit.&lt;/p&gt;
+&lt;img alt="Qt logo" class="align-right" src="http://takluyver.github.io/images/QtLogo.png"&gt;
+&lt;ul class="simple"&gt;
+&lt;li&gt;For traditional desktop UIs, &lt;strong&gt;Qt&lt;/strong&gt; is a clear winner. It's powerful, looks
+native on all the major platforms, and has probably the biggest community.
+There are two different Python bindings: &lt;a class="reference external" href="http://www.riverbankcomputing.com/software/pyqt/intro"&gt;PyQt&lt;/a&gt;
+is older and more mature, but it's only free if your application is open source
+(&lt;a class="reference external" href="http://www.riverbankcomputing.com/software/pyqt/license"&gt;licensing&lt;/a&gt;), while
+&lt;a class="reference external" href="http://qt-project.org/wiki/PySide"&gt;PySide&lt;/a&gt; is newer and more permissively
+licensed (LGPL). I refer to the &lt;a class="reference external" href="http://qt-project.org/doc/"&gt;main Qt docs&lt;/a&gt;
+a lot - the C++ examples mostly translate to Python quite well - but both &lt;a class="reference external" href="http://pyqt.sourceforge.net/Docs/PyQt4/index.html"&gt;PyQt's&lt;/a&gt; and &lt;a class="reference external" href="http://qt-project.org/wiki/PySideDocumentation"&gt;PySide's docs&lt;/a&gt; contain some useful information.
+&lt;a class="reference external" href="http://qt-project.org/doc/qt-4.8/designer-manual.html"&gt;Qt Designer&lt;/a&gt; is
+a drag and drop interface to design your UI; you can compile its .ui files
+to Python modules with the pyuic command line tool.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class="figure"&gt;
+&lt;img alt="/images/Qt_Designer.png" src="http://takluyver.github.io/images/Qt_Designer.png"&gt;
+&lt;p class="caption"&gt;Qt Designer in action&lt;/p&gt;
+&lt;/div&gt;
+&lt;img alt="Kivy logo" class="align-right" src="http://takluyver.github.io/images/kivy-logo.png" style="height: 64px;"&gt;
+&lt;ul class="simple"&gt;
+&lt;li&gt;For attractive, tablet-style interfaces, &lt;strong&gt;Kivy&lt;/strong&gt; is the
+right choice. It's a fairly young but promising system. If you want to bring
+your application to tablets and smartphones, then Kivy is the only option
+that I'm aware of. &lt;a class="reference external" href="http://kivy.org/"&gt;More info&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;When you want a basic GUI and don't care about aesthetics, &lt;strong&gt;Tkinter&lt;/strong&gt; is a
+simple option. It's installed as part of Python. Python's own &lt;a class="reference external" href="https://docs.python.org/3/library/tkinter.html"&gt;tkinter documentation&lt;/a&gt; is rather minimal, but it
+links to a bunch of other resources. &lt;a class="reference external" href="http://effbot.org/tkinterbook/"&gt;This site&lt;/a&gt;
+is my favourite - it hasn't been updated in years, but then neither has Tkinter
+(except that in Python 3, you &lt;tt class="docutils literal"&gt;import tkinter&lt;/tt&gt; rather than &lt;tt class="docutils literal"&gt;import Tkinter&lt;/tt&gt;).&lt;/li&gt;
+&lt;li&gt;&lt;a class="reference external" href="http://pygame.org/"&gt;pygame&lt;/a&gt; is popular for building simple 2D games. There
+are also frameworks for 3D graphics (&lt;a class="reference external" href="http://www.pyglet.org/"&gt;pyglet&lt;/a&gt;,
+&lt;a class="reference external" href="https://www.panda3d.org/"&gt;Panda3d&lt;/a&gt;), but I don't know much about them.&lt;/li&gt;
+&lt;li&gt;An increasingly popular option is to write your application as a local web
+server, and build the UI in HTML and Javascript. This lets you use Python's
+large ecosystem of web frameworks and libraries, but it's harder to integrate
+with desktop conventions for things like opening files and window management.
+&lt;a class="reference external" href="https://code.google.com/p/cefpython/"&gt;CEF Python&lt;/a&gt; lets you make a window
+for your application, based on Google Chrome, but I haven't tried that.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;A couple of alternatives I wouldn't recommend unless you have a reason to prefer
+them: &lt;strong&gt;GTK&lt;/strong&gt; is popular on Linux, but it
+looks ugly on other platforms. The older &lt;a class="reference external" href="http://www.pygtk.org/"&gt;pygtk&lt;/a&gt;
+bindings have excellent documentation; the newer &lt;a class="reference external" href="https://wiki.gnome.org/Projects/PyGObject"&gt;PyGObject&lt;/a&gt;
+system, which supports recent versions of GTK and Python, doesn't (though it's
+getting better). &lt;strong&gt;wx&lt;/strong&gt; seems to have a good community, but development is slow,
+and new projects that could have used it now mostly seem to pick Qt.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="section" id="packaging-and-distribution"&gt;
+&lt;h2&gt;Packaging and Distribution&lt;/h2&gt;
+&lt;p&gt;This is probably the roughest part of making an application in Python. You can
+easily distribute tools for developers as Python packages to be installed using
+pip, but end users don't generally have Python and pip already set up. Python
+packages also can't depend on something like Qt. There are a number of ways to
+package your application and its dependencies:&lt;/p&gt;
+&lt;ul class="simple"&gt;
+&lt;li&gt;&lt;a class="reference external" href="http://pynsist.readthedocs.org/"&gt;Pynsist&lt;/a&gt;, my own project, makes
+a Windows installer which installs a version of Python that you specify, and
+then installs your application. Unlike the other tools listed here, it doesn't
+try to 'freeze' your application into an exe, but makes shortcuts which launch
+.py files. This avoids certain kinds of bugs.&lt;/li&gt;
+&lt;li&gt;&lt;a class="reference external" href="http://cx-freeze.sourceforge.net/"&gt;cx_Freeze&lt;/a&gt; is a freeze tool:
+it makes an executable out of your application. It works on Windows, Mac and
+Linux, but only produces the executable for the platform you run it on (you
+can't make a Windows exe on Linux, for example).
+It can make simple packages (.msi for Windows, .dmg for Mac, .rpm for Linux),
+or you can feed its output into &lt;a class="reference external" href="http://nsis.sourceforge.net/"&gt;NSIS&lt;/a&gt; or
+&lt;a class="reference external" href="http://www.jrsoftware.org/isinfo.php"&gt;Inno Setup&lt;/a&gt; to have more control over
+building a Windows installer.&lt;/li&gt;
+&lt;li&gt;&lt;a class="reference external" href="http://www.pyinstaller.org/"&gt;PyInstaller&lt;/a&gt; is similar to cx_Freeze.
+It doesn't yet support Python 3, but it does have the ability to produce a
+'single file' executable.&lt;/li&gt;
+&lt;li&gt;&lt;a class="reference external" href="http://pythonhosted.org/py2app/"&gt;py2app&lt;/a&gt; is a freeze tool specifically
+for building Mac .app bundles.&lt;/li&gt;
+&lt;li&gt;&lt;a class="reference external" href="http://www.py2exe.org/"&gt;py2exe&lt;/a&gt; is a Windows-only freeze tool.
+Development stopped for a long time, but at the time of writing there is some
+recent activity on it.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class="section" id="linux-packaging"&gt;
+&lt;h3&gt;Linux packaging&lt;/h3&gt;
+&lt;p&gt;Although some of the freeze tools can build Linux binaries, the preferred way to
+distribute software is to make a package containing just your application, which
+has &lt;em&gt;dependencies&lt;/em&gt; on Python and the libraries your application uses. So your
+package doesn't contain everything it needs, but it tells the package manager
+what other pieces it needs installed.&lt;/p&gt;
+&lt;p&gt;Unfortunately, the procedures for preparing these are pretty complex, and Linux
+distributions still don't have a common package format. The main ones are deb
+packages, used by Debian, Ubuntu and Mint, and rpm packages, used by Fedora and
+Red Hat. I don't know of a good, simple guide to packaging Python applications
+for either - if you find one or write one, let me know.&lt;/p&gt;
+&lt;p&gt;You can get users to download and install your package, but if you want it to
+receive updates through the package manager, you'll need to host it in a
+repository. Submitting your package to the distribution's main repositories makes
+it easiest for users to install, but it has to meet the distro's quality
+standards, and you generally can't push new feature releases to people except when
+they upgrade the whole distribution. Some distributions offer hosting for
+personal repos: Ubuntu's PPAs, or Fedora's Fedorapeople repositories. You can
+also set up a repository on your own server.&lt;/p&gt;
+&lt;p&gt;If you don't want to think about all that, just make a tarball of your application,
+and explain to Linux users next to the download what it requires.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="section" id="miscellaneous"&gt;
+&lt;h2&gt;Miscellaneous&lt;/h2&gt;
+&lt;ul class="simple"&gt;
+&lt;li&gt;&lt;strong&gt;Threading&lt;/strong&gt;: If your application does anything taking longer than about a tenth
+of a second, you should do it in a background thread, so your UI doesn't freeze
+up. Be sure to only interact with GUI elements from the main thread, or you
+can get segfaults. Python's GIL isn't a big issue here: the UI thread shouldn't
+need much Python processing time.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Updates&lt;/strong&gt;: &lt;a class="reference external" href="https://pypi.python.org/pypi/esky"&gt;Esky&lt;/a&gt; is a framework for
+updating frozen Python applications. I haven't tried it, but it looks interesting.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;</description><guid>http://takluyver.github.io/posts/so-you-want-to-write-a-desktop-app-in-python.html</guid><pubDate>Mon, 16 Jun 2014 23:55:03 GMT</pubDate></item><item><title>ASTsearch - code searching that knows about code</title><link>http://takluyver.github.io/posts/astsearch-code-searching-that-knows-about-code.html</link><dc:creator>Thomas Kluyver</dc:creator><description>&lt;p&gt;This weekend's hack is a tool for searching Python code.&lt;/p&gt;
 &lt;p&gt;&lt;a class="reference external" href="https://github.com/takluyver/astsearch"&gt;ASTsearch source code on Github&lt;/a&gt;&lt;/p&gt;
 &lt;p&gt;What's wrong with grep, you might ask? Let's try to find every division in
 IPython's codebase:&lt;/p&gt;
@@ -81,7 +203,7 @@ useful.&lt;/p&gt;
 &lt;pre class="literal-block"&gt;
 pip install astsearch
 &lt;/pre&gt;
-&lt;/div&gt;</description><guid>http://takluyver.github.io/posts/astsearch-code-searching-that-knows-about-code.html</guid><pubDate>Sun, 27 Apr 2014 17:39:44 GMT</pubDate></item><item><title>Readable Python coroutines</title><link>http://takluyver.github.io/posts/readable-python-coroutines.html</link><description>&lt;p&gt;Quick exercise: write a piece of code that, each time you pass it a word (a
+&lt;/div&gt;</description><guid>http://takluyver.github.io/posts/astsearch-code-searching-that-knows-about-code.html</guid><pubDate>Sun, 27 Apr 2014 17:39:44 GMT</pubDate></item><item><title>Readable Python coroutines</title><link>http://takluyver.github.io/posts/readable-python-coroutines.html</link><dc:creator>Thomas Kluyver</dc:creator><description>&lt;p&gt;Quick exercise: write a piece of code that, each time you pass it a word (a
 string), tells you if you've passed it that word before. If you're reading a
 post with a title like this, it shouldn't take you more than a few minutes. For
 bonus points, have an option to ignore case, so it counts 'parrot' and 'Parrot'
@@ -258,7 +380,7 @@ ready.&lt;/p&gt;
 &lt;div class="section" id="coromagic-source-code"&gt;
 &lt;h2&gt;Coromagic source code&lt;/h2&gt;
 &lt;p&gt;This is the module used in the examples above.&lt;/p&gt;
-&lt;p&gt;&lt;a class="reference external" href="link://listing/coromagic.py"&gt;coromagic.py&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a class="reference external" href="http://takluyver.github.io/listings/coromagic.py.html"&gt;coromagic.py&lt;/a&gt;&lt;/p&gt;
 &lt;pre class="code python literal-block"&gt;
 &lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;functools&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;wraps&lt;/span&gt;
 

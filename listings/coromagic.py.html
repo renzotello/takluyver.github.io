@@ -1,58 +1,76 @@
-<!DOCTYPE html><html lang="en">
-<head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
-    
+<!DOCTYPE html>
+<html prefix="
+og: http://ogp.me/ns#
+article: http://ogp.me/ns/article#
+" lang="en">
+    <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="coromagic.py">
-    <meta name="author" content="Thomas Kluyver">
+    <meta name="viewport" content="width=device-width">
     <title>coromagic.py | Codel</title>
-    
-            <link href="../assets/css/bootstrap.min.css" rel="stylesheet" type="text/css">
-        <link href="../assets/css/rst.css" rel="stylesheet" type="text/css">
-        <link href="../assets/css/code.css" rel="stylesheet" type="text/css">
-        <link href="../assets/css/colorbox.css" rel="stylesheet" type="text/css">
-        <link href="../assets/css/theme.css" rel="stylesheet" type="text/css">
-            <link href="../assets/css/custom.css" rel="stylesheet" type="text/css">
-    <!--[if lt IE 9]>
-      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js" type="text/javascript"></script>
-    <![endif]-->
-            <link rel="alternate" type="application/rss+xml" title="RSS" href="../rss.xml">
+
+                <link href="../assets/css/all-nocdn.css" rel="stylesheet" type="text/css">
+
+                <link rel="alternate" type="application/rss+xml" title="RSS" href="../rss.xml">
+
+      <link rel="canonical" href="http://takluyver.github.io/listings/coromagic.py.html">
+
+
 
     
+        <!--[if lt IE 9]><script src="/assets/js/html5.js"></script><![endif]-->
+
     
-    
-    <link href="../assets/css/custom.css" rel="stylesheet" type="text/css">
+<link rel="stylesheet" type="text/css" href="../assets/css/custom.css">
+
+
+
 </head>
 <body>
+
 <!-- Menubar -->
 
 <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
-    <div class="navbar-header">
-        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
-          <span class="sr-only">Toggle navigation</span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-        </button>
-        <a class="navbar-brand" href="../">Codel</a>
-    </div>
-    <div class="collapse navbar-collapse navbar-ex1-collapse">
-        <ul class="nav navbar-nav">
-            
-                <li><a href="../archive.html">Archives</a>
-                </li><li><a href="../categories/index.html">Tags</a>
-                </li><li><a href="../rss.xml">RSS</a>
+    <div class="container">
+<!-- This keeps the margins nice -->
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="http://takluyver.github.io/">
 
-        </li></ul>
+                <span id="blog-title">Codel</span>
+            </a>
+        </div>
+<!-- /.navbar-header -->
+        <div class="collapse navbar-collapse navbar-ex1-collapse">
+            <ul class="nav navbar-nav">
+                                <li>
+<a href="../archive.html">Archives</a>
+                </li>
+<li>
+<a href="../categories/index.html">Tags</a>
+                </li>
+<li>
+<a href="../rss.xml">RSS</a>
 
-        <ul class="nav navbar-nav navbar-right">
-            
-            
                 
-        </ul>
-    </div><!-- /.navbar-collapse -->
+            </li>
+</ul>
+
+            <ul class="nav navbar-nav navbar-right">
+    <li>
+    <a href="coromagic.py" id="sourcelink">Source</a>
+    </li>
+                
+            </ul>
+        </div>
+<!-- /.navbar-collapse -->
+    </div>
+<!-- /.container -->
 </nav>
 
 <!-- End of Menubar -->
@@ -62,70 +80,72 @@
         <!--Body content-->
         <div class="row">
             
-
+<nav class="breadcrumbs">
 <ul class="breadcrumb">
         <li><a href=".">listings</a></li>
         <li><a href="#">coromagic.py.html</a></li>
 </ul>
+</nav>
 
-<ul class="list-unstyled">
-</ul>
-    <table class="codetable"><tr><td class="linenos"><div class="linenodiv"><pre><a href="coromagic.py.html#listingscoromagicpy-1"> 1</a>
-<a href="coromagic.py.html#listingscoromagicpy-2"> 2</a>
-<a href="coromagic.py.html#listingscoromagicpy-3"> 3</a>
-<a href="coromagic.py.html#listingscoromagicpy-4"> 4</a>
-<a href="coromagic.py.html#listingscoromagicpy-5"> 5</a>
-<a href="coromagic.py.html#listingscoromagicpy-6"> 6</a>
-<a href="coromagic.py.html#listingscoromagicpy-7"> 7</a>
-<a href="coromagic.py.html#listingscoromagicpy-8"> 8</a>
-<a href="coromagic.py.html#listingscoromagicpy-9"> 9</a>
-<a href="coromagic.py.html#listingscoromagicpy-10">10</a>
-<a href="coromagic.py.html#listingscoromagicpy-11">11</a>
-<a href="coromagic.py.html#listingscoromagicpy-12">12</a>
-<a href="coromagic.py.html#listingscoromagicpy-13">13</a>
-<a href="coromagic.py.html#listingscoromagicpy-14">14</a>
-<a href="coromagic.py.html#listingscoromagicpy-15">15</a>
-<a href="coromagic.py.html#listingscoromagicpy-16">16</a>
-<a href="coromagic.py.html#listingscoromagicpy-17">17</a>
-<a href="coromagic.py.html#listingscoromagicpy-18">18</a>
-<a href="coromagic.py.html#listingscoromagicpy-19">19</a>
-<a href="coromagic.py.html#listingscoromagicpy-20">20</a>
-<a href="coromagic.py.html#listingscoromagicpy-21">21</a>
-<a href="coromagic.py.html#listingscoromagicpy-22">22</a>
-<a href="coromagic.py.html#listingscoromagicpy-23">23</a>
-<a href="coromagic.py.html#listingscoromagicpy-24">24</a>
-<a href="coromagic.py.html#listingscoromagicpy-25">25</a>
-<a href="coromagic.py.html#listingscoromagicpy-26">26</a>
-<a href="coromagic.py.html#listingscoromagicpy-27">27</a>
-<a href="coromagic.py.html#listingscoromagicpy-28">28</a>
-<a href="coromagic.py.html#listingscoromagicpy-29">29</a>
-<a href="coromagic.py.html#listingscoromagicpy-30">30</a>
-<a href="coromagic.py.html#listingscoromagicpy-31">31</a>
-<a href="coromagic.py.html#listingscoromagicpy-32">32</a>
-<a href="coromagic.py.html#listingscoromagicpy-33">33</a>
-<a href="coromagic.py.html#listingscoromagicpy-34">34</a>
-<a href="coromagic.py.html#listingscoromagicpy-35">35</a>
-<a href="coromagic.py.html#listingscoromagicpy-36">36</a>
-<a href="coromagic.py.html#listingscoromagicpy-37">37</a>
-<a href="coromagic.py.html#listingscoromagicpy-38">38</a>
-<a href="coromagic.py.html#listingscoromagicpy-39">39</a>
-<a href="coromagic.py.html#listingscoromagicpy-40">40</a>
-<a href="coromagic.py.html#listingscoromagicpy-41">41</a>
-<a href="coromagic.py.html#listingscoromagicpy-42">42</a>
-<a href="coromagic.py.html#listingscoromagicpy-43">43</a>
-<a href="coromagic.py.html#listingscoromagicpy-44">44</a>
-<a href="coromagic.py.html#listingscoromagicpy-45">45</a>
-<a href="coromagic.py.html#listingscoromagicpy-46">46</a>
-<a href="coromagic.py.html#listingscoromagicpy-47">47</a>
-<a href="coromagic.py.html#listingscoromagicpy-48">48</a>
-<a href="coromagic.py.html#listingscoromagicpy-49">49</a>
-<a href="coromagic.py.html#listingscoromagicpy-50">50</a>
-<a href="coromagic.py.html#listingscoromagicpy-51">51</a>
-<a href="coromagic.py.html#listingscoromagicpy-52">52</a>
-<a href="coromagic.py.html#listingscoromagicpy-53">53</a>
-<a href="coromagic.py.html#listingscoromagicpy-54">54</a>
-<a href="coromagic.py.html#listingscoromagicpy-55">55</a>
-<a href="coromagic.py.html#listingscoromagicpy-56">56</a></pre></div></td><td class="code"><div class="code"><pre><a name="listingscoromagicpy-1"></a><span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">wraps</span>
+    <table class="codetable"><tr>
+<td class="linenos"><div class="linenodiv"><pre><a href="#listingscoromagicpy-1"> 1</a>
+<a href="#listingscoromagicpy-2"> 2</a>
+<a href="#listingscoromagicpy-3"> 3</a>
+<a href="#listingscoromagicpy-4"> 4</a>
+<a href="#listingscoromagicpy-5"> 5</a>
+<a href="#listingscoromagicpy-6"> 6</a>
+<a href="#listingscoromagicpy-7"> 7</a>
+<a href="#listingscoromagicpy-8"> 8</a>
+<a href="#listingscoromagicpy-9"> 9</a>
+<a href="#listingscoromagicpy-10">10</a>
+<a href="#listingscoromagicpy-11">11</a>
+<a href="#listingscoromagicpy-12">12</a>
+<a href="#listingscoromagicpy-13">13</a>
+<a href="#listingscoromagicpy-14">14</a>
+<a href="#listingscoromagicpy-15">15</a>
+<a href="#listingscoromagicpy-16">16</a>
+<a href="#listingscoromagicpy-17">17</a>
+<a href="#listingscoromagicpy-18">18</a>
+<a href="#listingscoromagicpy-19">19</a>
+<a href="#listingscoromagicpy-20">20</a>
+<a href="#listingscoromagicpy-21">21</a>
+<a href="#listingscoromagicpy-22">22</a>
+<a href="#listingscoromagicpy-23">23</a>
+<a href="#listingscoromagicpy-24">24</a>
+<a href="#listingscoromagicpy-25">25</a>
+<a href="#listingscoromagicpy-26">26</a>
+<a href="#listingscoromagicpy-27">27</a>
+<a href="#listingscoromagicpy-28">28</a>
+<a href="#listingscoromagicpy-29">29</a>
+<a href="#listingscoromagicpy-30">30</a>
+<a href="#listingscoromagicpy-31">31</a>
+<a href="#listingscoromagicpy-32">32</a>
+<a href="#listingscoromagicpy-33">33</a>
+<a href="#listingscoromagicpy-34">34</a>
+<a href="#listingscoromagicpy-35">35</a>
+<a href="#listingscoromagicpy-36">36</a>
+<a href="#listingscoromagicpy-37">37</a>
+<a href="#listingscoromagicpy-38">38</a>
+<a href="#listingscoromagicpy-39">39</a>
+<a href="#listingscoromagicpy-40">40</a>
+<a href="#listingscoromagicpy-41">41</a>
+<a href="#listingscoromagicpy-42">42</a>
+<a href="#listingscoromagicpy-43">43</a>
+<a href="#listingscoromagicpy-44">44</a>
+<a href="#listingscoromagicpy-45">45</a>
+<a href="#listingscoromagicpy-46">46</a>
+<a href="#listingscoromagicpy-47">47</a>
+<a href="#listingscoromagicpy-48">48</a>
+<a href="#listingscoromagicpy-49">49</a>
+<a href="#listingscoromagicpy-50">50</a>
+<a href="#listingscoromagicpy-51">51</a>
+<a href="#listingscoromagicpy-52">52</a>
+<a href="#listingscoromagicpy-53">53</a>
+<a href="#listingscoromagicpy-54">54</a>
+<a href="#listingscoromagicpy-55">55</a>
+<a href="#listingscoromagicpy-56">56</a></pre></div></td>
+<td class="code">
+<pre class="code literal-block"><a name="listingscoromagicpy-1"></a><span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">wraps</span>
 <a name="listingscoromagicpy-2"></a>
 <a name="listingscoromagicpy-3"></a><span class="c"># Tokens</span>
 <a name="listingscoromagicpy-4"></a><span class="n">receive</span> <span class="o">=</span> <span class="nb">object</span><span class="p">()</span>
@@ -181,40 +201,45 @@
 <a name="listingscoromagicpy-54"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">corowrapper</span><span class="o">.</span><span class="n">last_exc</span> <span class="o">=</span> <span class="n">value</span>
 <a name="listingscoromagicpy-55"></a>        <span class="k">return</span> <span class="bp">True</span>
 <a name="listingscoromagicpy-56"></a>            
-</pre></div>
-</td></tr></table>
-
+</pre>
+</td>
+</tr></table>
         </div>
         <!--End of body content-->
 
         <footer>
             Contents © 2014         <a href="mailto:takowl@gmail.com">Thomas Kluyver</a> - Powered by         <a href="http://nikola.ralsina.com.ar">Nikola</a>
+            
         </footer>
     </div>
 </div>
 
-
-            <script src="../assets/js/jquery-1.10.2.min.js" type="text/javascript"></script>
-            <script src="../assets/js/bootstrap.min.js" type="text/javascript"></script>
-        <script src="../assets/js/jquery.colorbox-min.js" type="text/javascript"></script>
-
-
-	
+            <script src="../assets/js/all-nocdn.js"></script>
+    
 <!-- Social buttons -->
 <div id="addthisbox" class="addthis_toolbox addthis_peekaboo_style addthis_default_style addthis_label_style addthis_32x32_style">
 <a class="addthis_button_more">Share</a>
-<ul><li><a class="addthis_button_facebook"></a>
-</li><li><a class="addthis_button_google_plusone_share"></a>
-</li><li><a class="addthis_button_linkedin"></a>
-</li><li><a class="addthis_button_twitter"></a>
-</li></ul>
+<ul>
+<li>
+<a class="addthis_button_facebook"></a>
+</li>
+<li>
+<a class="addthis_button_google_plusone_share"></a>
+</li>
+<li>
+<a class="addthis_button_linkedin"></a>
+</li>
+<li>
+<a class="addthis_button_twitter"></a>
+</li>
+</ul>
 </div>
-<script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-4f7088a56bb93798"></script>
+<script src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-4f7088a56bb93798"></script>
 <!-- End of social buttons -->
 
 
-    <script type="text/javascript">jQuery("a.image-reference").colorbox({rel:"gal",maxWidth:"100%",maxHeight:"100%",scalePhotos:true});</script>
-    
+    <script>jQuery("a.image-reference").colorbox({rel:"gal",maxWidth:"100%",maxHeight:"100%",scalePhotos:true});</script>
+
 
 </body>
 </html>

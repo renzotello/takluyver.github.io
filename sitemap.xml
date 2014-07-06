@@ -6,58 +6,54 @@
                         http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
  <url>
   <loc>http://takluyver.github.io/2013/index.html</loc>
-  <lastmod>2014-04-27</lastmod>
+  <lastmod>2014-07-04</lastmod>
  </url>
  <url>
   <loc>http://takluyver.github.io/2014/index.html</loc>
-  <lastmod>2014-04-27</lastmod>
+  <lastmod>2014-07-04</lastmod>
  </url>
  <url>
   <loc>http://takluyver.github.io/archive.html</loc>
-  <lastmod>2014-04-27</lastmod>
+  <lastmod>2014-07-04</lastmod>
  </url>
  <url>
   <loc>http://takluyver.github.io/categories/index.html</loc>
-  <lastmod>2014-04-27</lastmod>
+  <lastmod>2014-07-04</lastmod>
  </url>
  <url>
   <loc>http://takluyver.github.io/galleries/index.html</loc>
-  <lastmod>2014-04-27</lastmod>
- </url>
- <url>
-  <loc>http://takluyver.github.io/galleries/rss.xml</loc>
-  <lastmod>2014-04-27</lastmod>
+  <lastmod>2014-07-04</lastmod>
  </url>
  <url>
   <loc>http://takluyver.github.io/index.html</loc>
-  <lastmod>2014-04-27</lastmod>
+  <lastmod>2014-07-04</lastmod>
  </url>
  <url>
   <loc>http://takluyver.github.io/listings/__pycache__/index.html</loc>
-  <lastmod>2014-04-27</lastmod>
+  <lastmod>2014-07-04</lastmod>
  </url>
  <url>
   <loc>http://takluyver.github.io/listings/coromagic.py.html</loc>
-  <lastmod>2014-04-27</lastmod>
+  <lastmod>2014-07-04</lastmod>
  </url>
  <url>
   <loc>http://takluyver.github.io/listings/index.html</loc>
-  <lastmod>2014-04-27</lastmod>
+  <lastmod>2014-07-04</lastmod>
  </url>
  <url>
   <loc>http://takluyver.github.io/posts/astsearch-code-searching-that-knows-about-code.html</loc>
-  <lastmod>2014-04-27</lastmod>
+  <lastmod>2014-07-04</lastmod>
  </url>
  <url>
   <loc>http://takluyver.github.io/posts/readable-python-coroutines.html</loc>
-  <lastmod>2014-04-27</lastmod>
+  <lastmod>2014-07-04</lastmod>
+ </url>
+ <url>
+  <loc>http://takluyver.github.io/posts/so-you-want-to-write-a-desktop-app-in-python.html</loc>
+  <lastmod>2014-07-04</lastmod>
  </url>
  <url>
   <loc>http://takluyver.github.io/posts/writing-readable-python-coroutines.html</loc>
   <lastmod>2013-11-10</lastmod>
- </url>
- <url>
-  <loc>http://takluyver.github.io/rss.xml</loc>
-  <lastmod>2014-04-27</lastmod>
  </url>
 </urlset>
