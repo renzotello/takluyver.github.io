@@ -1,5 +1,69 @@
 <?xml version="1.0" encoding="utf-8"?>
-<rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/"><channel><title>Codel</title><link>http://takluyver.github.io/</link><description>Thoughts about code</description><language>en</language><lastBuildDate>Fri, 04 Jul 2014 12:07:04 GMT</lastBuildDate><generator>http://getnikola.com/</generator><docs>http://blogs.law.harvard.edu/tech/rss</docs><item><title>So you want to write a desktop app in Python</title><link>http://takluyver.github.io/posts/so-you-want-to-write-a-desktop-app-in-python.html</link><dc:creator>Thomas Kluyver</dc:creator><description>&lt;p&gt;This is an overview of the best tools and the best resources for building
+<?xml-stylesheet type="text/xsl" href="assets/xml/rss.xsl" media="all"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:dc="http://purl.org/dc/elements/1.1/"><channel><title>Codel</title><link>http://takluyver.github.io/</link><description>Thoughts about code</description><atom:link href="http://takluyver.github.io/rss.xml" type="application/rss+xml" rel="self"></atom:link><language>en</language><lastBuildDate>Fri, 20 Nov 2015 15:26:34 GMT</lastBuildDate><generator>https://getnikola.com/</generator><docs>http://blogs.law.harvard.edu/tech/rss</docs><item><title>Why did I write yet another package manager?</title><link>http://takluyver.github.io/posts/why-did-i-write-yet-another-package-manager.html</link><dc:creator>Thomas Kluyver</dc:creator><description>&lt;div&gt;&lt;p&gt;&lt;a class="reference external" href="http://batis-installer.github.io/"&gt;Batis&lt;/a&gt; is a package manager for desktop applications on Linux.
+Linux users are probably already used to using several different package managers -
+apt, pip, npm, etc. - so why on earth do we need one more?&lt;/p&gt;
+&lt;p&gt;Firstly, having many package managers is not a problem.
+There are many different kinds of things we want to install.
+Pip, for instance, knows how to install python packages;
+if you want to install a ruby package, you'll need another tool.
+The atom text editor includes a package manager, apm, purely for its own extensions,
+and other extensible applications, like browsers, are quietly doing their own package management too.
+You can try to build one package manager to rule them all, as Linux distros do,
+but that system has to be more complex.
+‘Do one thing well’ applies to package managers too.&lt;/p&gt;
+&lt;p&gt;The best way to distribute desktop applications on Linux at present is through distro repositories.
+The idea is that power users from each distro who like your application will prepare packages,
+making it easily available for other users of the same distro.
+But this has several drawbacks for application developers:&lt;/p&gt;
+&lt;ul class="simple"&gt;
+&lt;li&gt;You’re not in control of your distribution channels -
+if a distro doesn’t like your app, they can block their users’ easy access to it.&lt;/li&gt;
+&lt;li&gt;Feature releases of your app are tied to releases of the entire distro.
+Launch version 2.0 at the wrong time, and even the keen Ubuntu users who
+update on release day it comes out won’t see your new features for six months.
+Some users will be stuck on old versions for &lt;em&gt;years&lt;/em&gt;.
+There are exceptions, but this is the norm in the major Linux distributions.&lt;/li&gt;
+&lt;li&gt;If you want to bypass the distros and host your own repositories,
+you have to deal with several different packaging systems -
+at a minimum, .deb and .rpm packages. Desktop Linux is a small market anyway,
+and this fragmentation makes it even more painful to target.&lt;/li&gt;
+&lt;li&gt;Your install instructions either have to be vague,
+or contain a table of commands for different distros
+(like &lt;a class="reference external" href="http://play0ad.com/download/linux/"&gt;0 A.D.&lt;/a&gt; or &lt;a class="reference external" href="https://git-cola.github.io/downloads.html"&gt;git-cola&lt;/a&gt;).
+Neither is ideal for less technical users.&lt;/li&gt;
+&lt;li&gt;Distro packages can usually only be installed as root.
+This often doesn’t matter for desktop use, where the user is usually the owner of the computer,
+but it can be an annoying restriction.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;The tools for packaging modules in many programming languages can also be used to
+package command line applications. You've probably seen utilities that you install
+using pip (e.g. &lt;a class="reference external" href="https://getnikola.com/getting-started.html"&gt;Nikola&lt;/a&gt;),
+npm (&lt;a class="reference external" href="http://bower.io/#install-bower"&gt;bower&lt;/a&gt;),
+or gem (&lt;a class="reference external" href="https://jekyllrb.com/"&gt;Jekyll&lt;/a&gt;).
+But these tools don't know about creating menu entries or file associations, so
+they're not great for distributing graphical applications.&lt;/p&gt;
+&lt;p&gt;Many applications forgo all of these packaging mechanisms,
+and distribute tarballs or zip files from their own website (e.g.
+&lt;a class="reference external" href="http://powdertoy.co.uk/"&gt;Powder Toy&lt;/a&gt;,
+&lt;a class="reference external" href="https://www.jetbrains.com/pycharm/download/#linux"&gt;PyCharm&lt;/a&gt;,
+&lt;a class="reference external" href="https://code.visualstudio.com/"&gt;Visual Studio Code&lt;/a&gt;).
+This is the starting point for Batis.
+Batis adds a consistent way to install and uninstall applications, so that developers
+can focus on their applications, not on rewriting Linux install code.
+A Batis package is a regular tarball with some extra files, so there’s no need
+to build another tarball for users without Batis.
+You even get a free &lt;tt class="docutils literal"&gt;install.sh&lt;/tt&gt; script inside your package for those users to run.&lt;/p&gt;
+&lt;p&gt;Batis adds one extra layer above tarball downloads, the index file.
+This is a JSON file containing the URLs of the tarballs for download,
+along with some basic metadata.
+Batis uses this to select the best build to install -
+for instance if you have separate builds for 64 bit and 32 bit systems.
+In future versions, the index will also be used to check for updates to installed applications.&lt;/p&gt;
+&lt;p&gt;So, &lt;strong&gt;Batis is&lt;/strong&gt; a distro-agnostic way for users to get applications directly
+from developers. It works with the standard mechanisms to integrate applications
+into the desktop environment. And it's an evolutionary improvement on distributing
+plain tarballs.&lt;/p&gt;
+&lt;p&gt;&lt;a class="reference external" href="http://batis-installer.github.io/"&gt;Batis website&lt;/a&gt;—for more information&lt;/p&gt;&lt;/div&gt;</description><guid>http://takluyver.github.io/posts/why-did-i-write-yet-another-package-manager.html</guid><pubDate>Fri, 20 Nov 2015 13:06:47 GMT</pubDate></item><item><title>So you want to write a desktop app in Python</title><link>http://takluyver.github.io/posts/so-you-want-to-write-a-desktop-app-in-python.html</link><dc:creator>Thomas Kluyver</dc:creator><description>&lt;div&gt;&lt;p&gt;This is an overview of the best tools and the best resources for building
 desktop applications in Python.&lt;/p&gt;
 &lt;p&gt;First things first. You can build great desktop applications in Python, and some
 are widely used (like Dropbox). But you'll have to find your own way much more
@@ -121,7 +185,7 @@ need much Python processing time.&lt;/li&gt;
 &lt;li&gt;&lt;strong&gt;Updates&lt;/strong&gt;: &lt;a class="reference external" href="https://pypi.python.org/pypi/esky"&gt;Esky&lt;/a&gt; is a framework for
 updating frozen Python applications. I haven't tried it, but it looks interesting.&lt;/li&gt;
 &lt;/ul&gt;
-&lt;/div&gt;</description><guid>http://takluyver.github.io/posts/so-you-want-to-write-a-desktop-app-in-python.html</guid><pubDate>Mon, 16 Jun 2014 23:55:03 GMT</pubDate></item><item><title>ASTsearch - code searching that knows about code</title><link>http://takluyver.github.io/posts/astsearch-code-searching-that-knows-about-code.html</link><dc:creator>Thomas Kluyver</dc:creator><description>&lt;p&gt;This weekend's hack is a tool for searching Python code.&lt;/p&gt;
+&lt;/div&gt;&lt;/div&gt;</description><guid>http://takluyver.github.io/posts/so-you-want-to-write-a-desktop-app-in-python.html</guid><pubDate>Mon, 16 Jun 2014 23:55:03 GMT</pubDate></item><item><title>ASTsearch - code searching that knows about code</title><link>http://takluyver.github.io/posts/astsearch-code-searching-that-knows-about-code.html</link><dc:creator>Thomas Kluyver</dc:creator><description>&lt;div&gt;&lt;p&gt;This weekend's hack is a tool for searching Python code.&lt;/p&gt;
 &lt;p&gt;&lt;a class="reference external" href="https://github.com/takluyver/astsearch"&gt;ASTsearch source code on Github&lt;/a&gt;&lt;/p&gt;
 &lt;p&gt;What's wrong with grep, you might ask? Let's try to find every division in
 IPython's codebase:&lt;/p&gt;
@@ -203,7 +267,7 @@ useful.&lt;/p&gt;
 &lt;pre class="literal-block"&gt;
 pip install astsearch
 &lt;/pre&gt;
-&lt;/div&gt;</description><guid>http://takluyver.github.io/posts/astsearch-code-searching-that-knows-about-code.html</guid><pubDate>Sun, 27 Apr 2014 17:39:44 GMT</pubDate></item><item><title>Readable Python coroutines</title><link>http://takluyver.github.io/posts/readable-python-coroutines.html</link><dc:creator>Thomas Kluyver</dc:creator><description>&lt;p&gt;Quick exercise: write a piece of code that, each time you pass it a word (a
+&lt;/div&gt;&lt;/div&gt;</description><guid>http://takluyver.github.io/posts/astsearch-code-searching-that-knows-about-code.html</guid><pubDate>Sun, 27 Apr 2014 17:39:44 GMT</pubDate></item><item><title>Readable Python coroutines</title><link>http://takluyver.github.io/posts/readable-python-coroutines.html</link><dc:creator>Thomas Kluyver</dc:creator><description>&lt;div&gt;&lt;p&gt;Quick exercise: write a piece of code that, each time you pass it a word (a
 string), tells you if you've passed it that word before. If you're reading a
 post with a title like this, it shouldn't take you more than a few minutes. For
 bonus points, have an option to ignore case, so it counts 'parrot' and 'Parrot'
@@ -211,20 +275,18 @@ as the same word.&lt;/p&gt;
 &lt;p&gt;What did you go for? A function with a global variable (yuck!)? A class with a
 method? A closure?&lt;/p&gt;
 &lt;p&gt;How about a coroutine? Here's what that would look like:&lt;/p&gt;
-&lt;pre class="code python literal-block"&gt;
-&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;have_seen&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;case_sensitive&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="bp"&gt;False&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
-    &lt;span class="n"&gt;seen&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nb"&gt;set&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
-
-    &lt;span class="n"&gt;res&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="bp"&gt;None&lt;/span&gt;
-    &lt;span class="k"&gt;while&lt;/span&gt; &lt;span class="bp"&gt;True&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
-        &lt;span class="n"&gt;word&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;yield&lt;/span&gt; &lt;span class="n"&gt;res&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-        &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="ow"&gt;not&lt;/span&gt; &lt;span class="n"&gt;case_sensitive&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
-            &lt;span class="n"&gt;word&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;word&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;lower&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
-
-        &lt;span class="n"&gt;res&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;word&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="n"&gt;seen&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-        &lt;span class="n"&gt;seen&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;add&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;word&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-&lt;/pre&gt;
-&lt;p&gt;And here's how you would use it:&lt;/p&gt;
+&lt;pre class="code python"&gt;&lt;a name="rest_code_3fc202ee168147efa2a3f87de07a25c5-1"&gt;&lt;/a&gt;&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;have_seen&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;case_sensitive&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="bp"&gt;False&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+&lt;a name="rest_code_3fc202ee168147efa2a3f87de07a25c5-2"&gt;&lt;/a&gt;    &lt;span class="n"&gt;seen&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nb"&gt;set&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+&lt;a name="rest_code_3fc202ee168147efa2a3f87de07a25c5-3"&gt;&lt;/a&gt;
+&lt;a name="rest_code_3fc202ee168147efa2a3f87de07a25c5-4"&gt;&lt;/a&gt;    &lt;span class="n"&gt;res&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="bp"&gt;None&lt;/span&gt;
+&lt;a name="rest_code_3fc202ee168147efa2a3f87de07a25c5-5"&gt;&lt;/a&gt;    &lt;span class="k"&gt;while&lt;/span&gt; &lt;span class="bp"&gt;True&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+&lt;a name="rest_code_3fc202ee168147efa2a3f87de07a25c5-6"&gt;&lt;/a&gt;        &lt;span class="n"&gt;word&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;yield&lt;/span&gt; &lt;span class="n"&gt;res&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;a name="rest_code_3fc202ee168147efa2a3f87de07a25c5-7"&gt;&lt;/a&gt;        &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="ow"&gt;not&lt;/span&gt; &lt;span class="n"&gt;case_sensitive&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+&lt;a name="rest_code_3fc202ee168147efa2a3f87de07a25c5-8"&gt;&lt;/a&gt;            &lt;span class="n"&gt;word&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;word&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;lower&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+&lt;a name="rest_code_3fc202ee168147efa2a3f87de07a25c5-9"&gt;&lt;/a&gt;
+&lt;a name="rest_code_3fc202ee168147efa2a3f87de07a25c5-10"&gt;&lt;/a&gt;        &lt;span class="n"&gt;res&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;word&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="n"&gt;seen&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;a name="rest_code_3fc202ee168147efa2a3f87de07a25c5-11"&gt;&lt;/a&gt;        &lt;span class="n"&gt;seen&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;add&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;word&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;&lt;p&gt;And here's how you would use it:&lt;/p&gt;
 &lt;pre class="literal-block"&gt;
 &amp;gt;&amp;gt;&amp;gt; hs = have_seen()
 &amp;gt;&amp;gt;&amp;gt; next(hs)  # prime it
@@ -253,22 +315,20 @@ but that doesn't make the code inside the coroutine any clearer.&lt;/li&gt;
 &lt;p&gt;So the standard Python syntax is rather awkward. But we can make it clearer by
 using a bit of wrapper code.
 The trick is separating sending a value from receiving one:&lt;/p&gt;
-&lt;pre class="code python literal-block"&gt;
-&lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;coromagic&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;coroutine&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;receive&lt;/span&gt;
-
-&lt;span class="nd"&gt;@coroutine&lt;/span&gt;
-&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;have_seen2&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;case_sensitive&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="bp"&gt;False&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
-    &lt;span class="n"&gt;seen&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nb"&gt;set&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
-
-    &lt;span class="k"&gt;while&lt;/span&gt; &lt;span class="bp"&gt;True&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
-        &lt;span class="n"&gt;word&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;yield&lt;/span&gt; &lt;span class="n"&gt;receive&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-        &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="ow"&gt;not&lt;/span&gt; &lt;span class="n"&gt;case_sensitive&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
-            &lt;span class="n"&gt;word&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;word&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;lower&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
-
-        &lt;span class="k"&gt;yield&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;word&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="n"&gt;seen&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-        &lt;span class="n"&gt;seen&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;add&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;word&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-&lt;/pre&gt;
-&lt;p&gt;We no longer need the &lt;cite&gt;res&lt;/cite&gt; variable. Instead, we alternate between two uses of
+&lt;pre class="code python"&gt;&lt;a name="rest_code_d61b15d6119841e6826c9294dfccaef8-1"&gt;&lt;/a&gt;&lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;coromagic&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;coroutine&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;receive&lt;/span&gt;
+&lt;a name="rest_code_d61b15d6119841e6826c9294dfccaef8-2"&gt;&lt;/a&gt;
+&lt;a name="rest_code_d61b15d6119841e6826c9294dfccaef8-3"&gt;&lt;/a&gt;&lt;span class="nd"&gt;@coroutine&lt;/span&gt;
+&lt;a name="rest_code_d61b15d6119841e6826c9294dfccaef8-4"&gt;&lt;/a&gt;&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;have_seen2&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;case_sensitive&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="bp"&gt;False&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+&lt;a name="rest_code_d61b15d6119841e6826c9294dfccaef8-5"&gt;&lt;/a&gt;    &lt;span class="n"&gt;seen&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nb"&gt;set&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+&lt;a name="rest_code_d61b15d6119841e6826c9294dfccaef8-6"&gt;&lt;/a&gt;
+&lt;a name="rest_code_d61b15d6119841e6826c9294dfccaef8-7"&gt;&lt;/a&gt;    &lt;span class="k"&gt;while&lt;/span&gt; &lt;span class="bp"&gt;True&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+&lt;a name="rest_code_d61b15d6119841e6826c9294dfccaef8-8"&gt;&lt;/a&gt;        &lt;span class="n"&gt;word&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;yield&lt;/span&gt; &lt;span class="n"&gt;receive&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;a name="rest_code_d61b15d6119841e6826c9294dfccaef8-9"&gt;&lt;/a&gt;        &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="ow"&gt;not&lt;/span&gt; &lt;span class="n"&gt;case_sensitive&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+&lt;a name="rest_code_d61b15d6119841e6826c9294dfccaef8-10"&gt;&lt;/a&gt;            &lt;span class="n"&gt;word&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;word&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;lower&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+&lt;a name="rest_code_d61b15d6119841e6826c9294dfccaef8-11"&gt;&lt;/a&gt;
+&lt;a name="rest_code_d61b15d6119841e6826c9294dfccaef8-12"&gt;&lt;/a&gt;        &lt;span class="k"&gt;yield&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;word&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="n"&gt;seen&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;a name="rest_code_d61b15d6119841e6826c9294dfccaef8-13"&gt;&lt;/a&gt;        &lt;span class="n"&gt;seen&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;add&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;word&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;&lt;p&gt;We no longer need the &lt;cite&gt;res&lt;/cite&gt; variable. Instead, we alternate between two uses of
 yield: a receiving yield, where we send the wrapper a token to indicate that
 we're ready for a new value, and a sending yield, where we don't expect to get a
 value back. The caller can use this in exactly the same way as the original
@@ -296,24 +356,22 @@ StopIteration
 &lt;/pre&gt;
 &lt;p&gt;I've got a solution of sorts for that, although it still feels a bit awkward.
 The coroutine can request a context manager to catch exceptions:&lt;/p&gt;
-&lt;pre class="code python literal-block"&gt;
-&lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;coromagic&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;get_exception_context&lt;/span&gt;
-
-&lt;span class="nd"&gt;@coroutine&lt;/span&gt;
-&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;have_seen3&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;case_sensitive&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="bp"&gt;False&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
-    &lt;span class="n"&gt;exception_context&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;yield&lt;/span&gt; &lt;span class="n"&gt;get_exception_context&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-    &lt;span class="n"&gt;seen&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nb"&gt;set&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
-
-    &lt;span class="k"&gt;while&lt;/span&gt; &lt;span class="bp"&gt;True&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
-        &lt;span class="k"&gt;with&lt;/span&gt; &lt;span class="n"&gt;exception_context&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
-            &lt;span class="n"&gt;word&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;yield&lt;/span&gt; &lt;span class="n"&gt;receive&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-            &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="ow"&gt;not&lt;/span&gt; &lt;span class="n"&gt;case_sensitive&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
-                &lt;span class="n"&gt;word&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;word&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;lower&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
-
-            &lt;span class="k"&gt;yield&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;word&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="n"&gt;seen&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-            &lt;span class="n"&gt;seen&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;add&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;word&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-&lt;/pre&gt;
-&lt;p&gt;The context manager co-ordinates with the wrapper to suppress the exception inside the coroutine, but raise it to the caller:&lt;/p&gt;
+&lt;pre class="code python"&gt;&lt;a name="rest_code_a41751ad7d114f73970dea5e06755474-1"&gt;&lt;/a&gt;&lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;coromagic&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;get_exception_context&lt;/span&gt;
+&lt;a name="rest_code_a41751ad7d114f73970dea5e06755474-2"&gt;&lt;/a&gt;
+&lt;a name="rest_code_a41751ad7d114f73970dea5e06755474-3"&gt;&lt;/a&gt;&lt;span class="nd"&gt;@coroutine&lt;/span&gt;
+&lt;a name="rest_code_a41751ad7d114f73970dea5e06755474-4"&gt;&lt;/a&gt;&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;have_seen3&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;case_sensitive&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="bp"&gt;False&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+&lt;a name="rest_code_a41751ad7d114f73970dea5e06755474-5"&gt;&lt;/a&gt;    &lt;span class="n"&gt;exception_context&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;yield&lt;/span&gt; &lt;span class="n"&gt;get_exception_context&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;a name="rest_code_a41751ad7d114f73970dea5e06755474-6"&gt;&lt;/a&gt;    &lt;span class="n"&gt;seen&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nb"&gt;set&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+&lt;a name="rest_code_a41751ad7d114f73970dea5e06755474-7"&gt;&lt;/a&gt;
+&lt;a name="rest_code_a41751ad7d114f73970dea5e06755474-8"&gt;&lt;/a&gt;    &lt;span class="k"&gt;while&lt;/span&gt; &lt;span class="bp"&gt;True&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+&lt;a name="rest_code_a41751ad7d114f73970dea5e06755474-9"&gt;&lt;/a&gt;        &lt;span class="k"&gt;with&lt;/span&gt; &lt;span class="n"&gt;exception_context&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+&lt;a name="rest_code_a41751ad7d114f73970dea5e06755474-10"&gt;&lt;/a&gt;            &lt;span class="n"&gt;word&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;yield&lt;/span&gt; &lt;span class="n"&gt;receive&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;a name="rest_code_a41751ad7d114f73970dea5e06755474-11"&gt;&lt;/a&gt;            &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="ow"&gt;not&lt;/span&gt; &lt;span class="n"&gt;case_sensitive&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+&lt;a name="rest_code_a41751ad7d114f73970dea5e06755474-12"&gt;&lt;/a&gt;                &lt;span class="n"&gt;word&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;word&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;lower&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+&lt;a name="rest_code_a41751ad7d114f73970dea5e06755474-13"&gt;&lt;/a&gt;
+&lt;a name="rest_code_a41751ad7d114f73970dea5e06755474-14"&gt;&lt;/a&gt;            &lt;span class="k"&gt;yield&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;word&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="n"&gt;seen&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;a name="rest_code_a41751ad7d114f73970dea5e06755474-15"&gt;&lt;/a&gt;            &lt;span class="n"&gt;seen&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;add&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;word&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;&lt;p&gt;The context manager co-ordinates with the wrapper to suppress the exception inside the coroutine, but raise it to the caller:&lt;/p&gt;
 &lt;pre class="literal-block"&gt;
 &amp;gt;&amp;gt;&amp;gt; hs3 = have_seen3()
 &amp;gt;&amp;gt;&amp;gt; hs3.send(12)
@@ -343,25 +401,23 @@ short, but here's my attempt. We're writing a plugin for a chat
 application, which lets any chatter say "password foo", silencing everyone until
 someone guesses "foo". The application just passes us each message, and expects
 a True/False response saying whether it should be broadcast.&lt;/p&gt;
-&lt;pre class="code python literal-block"&gt;
-&lt;span class="nd"&gt;@coroutine&lt;/span&gt;
-&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;password_game&lt;/span&gt;&lt;span class="p"&gt;():&lt;/span&gt;
-    &lt;span class="k"&gt;while&lt;/span&gt; &lt;span class="bp"&gt;True&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
-        &lt;span class="c"&gt;# Normal chatting&lt;/span&gt;
-        &lt;span class="k"&gt;while&lt;/span&gt; &lt;span class="bp"&gt;True&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
-            &lt;span class="n"&gt;msg&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;yield&lt;/span&gt; &lt;span class="n"&gt;receive&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-            &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="n"&gt;msg&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;startswith&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;"password "&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
-                &lt;span class="n"&gt;password&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;msg&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;9&lt;/span&gt;&lt;span class="p"&gt;:]&lt;/span&gt;
-                &lt;span class="k"&gt;yield&lt;/span&gt; &lt;span class="bp"&gt;False&lt;/span&gt;
-                &lt;span class="k"&gt;break&lt;/span&gt;
-            &lt;span class="k"&gt;yield&lt;/span&gt; &lt;span class="bp"&gt;True&lt;/span&gt;  &lt;span class="c"&gt;# Broadcast&lt;/span&gt;
-
-        &lt;span class="c"&gt;# Waiting for someone to guess the password&lt;/span&gt;
-        &lt;span class="k"&gt;while&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;yield&lt;/span&gt; &lt;span class="n"&gt;receive&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;!=&lt;/span&gt; &lt;span class="n"&gt;password&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
-            &lt;span class="k"&gt;yield&lt;/span&gt; &lt;span class="bp"&gt;False&lt;/span&gt; &lt;span class="c"&gt;# Don't send messages&lt;/span&gt;
-        &lt;span class="k"&gt;yield&lt;/span&gt; &lt;span class="bp"&gt;True&lt;/span&gt;   &lt;span class="c"&gt;# Show everyone the password once it has been guessed&lt;/span&gt;
-&lt;/pre&gt;
-&lt;p&gt;In IPython, we have some coroutines for input processing. For instance, the
+&lt;pre class="code python"&gt;&lt;a name="rest_code_a79909d828644a43b8b0c60a3ea33e04-1"&gt;&lt;/a&gt;&lt;span class="nd"&gt;@coroutine&lt;/span&gt;
+&lt;a name="rest_code_a79909d828644a43b8b0c60a3ea33e04-2"&gt;&lt;/a&gt;&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;password_game&lt;/span&gt;&lt;span class="p"&gt;():&lt;/span&gt;
+&lt;a name="rest_code_a79909d828644a43b8b0c60a3ea33e04-3"&gt;&lt;/a&gt;    &lt;span class="k"&gt;while&lt;/span&gt; &lt;span class="bp"&gt;True&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+&lt;a name="rest_code_a79909d828644a43b8b0c60a3ea33e04-4"&gt;&lt;/a&gt;        &lt;span class="c"&gt;# Normal chatting&lt;/span&gt;
+&lt;a name="rest_code_a79909d828644a43b8b0c60a3ea33e04-5"&gt;&lt;/a&gt;        &lt;span class="k"&gt;while&lt;/span&gt; &lt;span class="bp"&gt;True&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+&lt;a name="rest_code_a79909d828644a43b8b0c60a3ea33e04-6"&gt;&lt;/a&gt;            &lt;span class="n"&gt;msg&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;yield&lt;/span&gt; &lt;span class="n"&gt;receive&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;a name="rest_code_a79909d828644a43b8b0c60a3ea33e04-7"&gt;&lt;/a&gt;            &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="n"&gt;msg&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;startswith&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;"password "&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+&lt;a name="rest_code_a79909d828644a43b8b0c60a3ea33e04-8"&gt;&lt;/a&gt;                &lt;span class="n"&gt;password&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;msg&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;9&lt;/span&gt;&lt;span class="p"&gt;:]&lt;/span&gt;
+&lt;a name="rest_code_a79909d828644a43b8b0c60a3ea33e04-9"&gt;&lt;/a&gt;                &lt;span class="k"&gt;yield&lt;/span&gt; &lt;span class="bp"&gt;False&lt;/span&gt;
+&lt;a name="rest_code_a79909d828644a43b8b0c60a3ea33e04-10"&gt;&lt;/a&gt;                &lt;span class="k"&gt;break&lt;/span&gt;
+&lt;a name="rest_code_a79909d828644a43b8b0c60a3ea33e04-11"&gt;&lt;/a&gt;            &lt;span class="k"&gt;yield&lt;/span&gt; &lt;span class="bp"&gt;True&lt;/span&gt;  &lt;span class="c"&gt;# Broadcast&lt;/span&gt;
+&lt;a name="rest_code_a79909d828644a43b8b0c60a3ea33e04-12"&gt;&lt;/a&gt;
+&lt;a name="rest_code_a79909d828644a43b8b0c60a3ea33e04-13"&gt;&lt;/a&gt;        &lt;span class="c"&gt;# Waiting for someone to guess the password&lt;/span&gt;
+&lt;a name="rest_code_a79909d828644a43b8b0c60a3ea33e04-14"&gt;&lt;/a&gt;        &lt;span class="k"&gt;while&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;yield&lt;/span&gt; &lt;span class="n"&gt;receive&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;!=&lt;/span&gt; &lt;span class="n"&gt;password&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+&lt;a name="rest_code_a79909d828644a43b8b0c60a3ea33e04-15"&gt;&lt;/a&gt;            &lt;span class="k"&gt;yield&lt;/span&gt; &lt;span class="bp"&gt;False&lt;/span&gt; &lt;span class="c"&gt;# Don't send messages&lt;/span&gt;
+&lt;a name="rest_code_a79909d828644a43b8b0c60a3ea33e04-16"&gt;&lt;/a&gt;        &lt;span class="k"&gt;yield&lt;/span&gt; &lt;span class="bp"&gt;True&lt;/span&gt;   &lt;span class="c"&gt;# Show everyone the password once it has been guessed&lt;/span&gt;
+&lt;/pre&gt;&lt;p&gt;In IPython, we have some coroutines for input processing. For instance, the
 transformer to strip prompts from pasted code processes the first two lines in a
 prompt-detection state. Then it moves into a prompt-stripping state if it
 detected a prompt, or a no-op state if it didn't.&lt;/p&gt;
@@ -381,61 +437,59 @@ ready.&lt;/p&gt;
 &lt;h2&gt;Coromagic source code&lt;/h2&gt;
 &lt;p&gt;This is the module used in the examples above.&lt;/p&gt;
 &lt;p&gt;&lt;a class="reference external" href="http://takluyver.github.io/listings/coromagic.py.html"&gt;coromagic.py&lt;/a&gt;&lt;/p&gt;
-&lt;pre class="code python literal-block"&gt;
-&lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;functools&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;wraps&lt;/span&gt;
-
-&lt;span class="c"&gt;# Tokens&lt;/span&gt;
-&lt;span class="n"&gt;receive&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nb"&gt;object&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
-&lt;span class="n"&gt;get_exception_context&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nb"&gt;object&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
-
-&lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="nc"&gt;CoroutineWrapper&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;object&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
-    &lt;span class="n"&gt;last_exc&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="bp"&gt;None&lt;/span&gt;
-
-    &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;__init__&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;generator&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
-        &lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;gen&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;generator&lt;/span&gt;
-
-        &lt;span class="n"&gt;ready&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nb"&gt;next&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;gen&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-        &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="n"&gt;ready&lt;/span&gt; &lt;span class="ow"&gt;is&lt;/span&gt; &lt;span class="n"&gt;get_exception_context&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
-            &lt;span class="n"&gt;ready&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;gen&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;send&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;ExceptionContext&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
-        &lt;span class="k"&gt;assert&lt;/span&gt; &lt;span class="n"&gt;ready&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="n"&gt;receive&lt;/span&gt;
-
-    &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;send&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;arg&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
-        &lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;last_exc&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="bp"&gt;None&lt;/span&gt;
-
-        &lt;span class="n"&gt;res&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;gen&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;send&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;arg&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-        &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="n"&gt;res&lt;/span&gt; &lt;span class="ow"&gt;is&lt;/span&gt; &lt;span class="n"&gt;receive&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
-            &lt;span class="n"&gt;res&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="bp"&gt;None&lt;/span&gt;
-        &lt;span class="k"&gt;else&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
-            &lt;span class="k"&gt;assert&lt;/span&gt; &lt;span class="nb"&gt;next&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;gen&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="ow"&gt;is&lt;/span&gt; &lt;span class="n"&gt;receive&lt;/span&gt;
-
-        &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;last_exc&lt;/span&gt; &lt;span class="ow"&gt;is&lt;/span&gt; &lt;span class="ow"&gt;not&lt;/span&gt; &lt;span class="bp"&gt;None&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
-            &lt;span class="k"&gt;raise&lt;/span&gt; &lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;last_exc&lt;/span&gt;
-
-        &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;res&lt;/span&gt;
-
-&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;coroutine&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;genfunc&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
-    &lt;span class="sd"&gt;"""Decorator for a generator function to wrap it as a coroutine."""&lt;/span&gt;
-    &lt;span class="nd"&gt;@wraps&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;genfunc&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-    &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;wrapped&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;args&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="o"&gt;**&lt;/span&gt;&lt;span class="n"&gt;kwargs&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
-        &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;CoroutineWrapper&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;genfunc&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;args&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="o"&gt;**&lt;/span&gt;&lt;span class="n"&gt;kwargs&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
-
-    &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;wrapped&lt;/span&gt;
-
-&lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="nc"&gt;ExceptionContext&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;object&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
-    &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;__init__&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;corowrapper&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
-        &lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;corowrapper&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;corowrapper&lt;/span&gt;
-
-    &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;__enter__&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
-        &lt;span class="k"&gt;pass&lt;/span&gt;
-
-    &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;__exit__&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nb"&gt;type&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;value&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;tb&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
-        &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="nb"&gt;type&lt;/span&gt; &lt;span class="ow"&gt;is&lt;/span&gt; &lt;span class="bp"&gt;None&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
-            &lt;span class="k"&gt;return&lt;/span&gt;
-        &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="nb"&gt;type&lt;/span&gt; &lt;span class="ow"&gt;is&lt;/span&gt; &lt;span class="ne"&gt;GeneratorExit&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
-            &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="bp"&gt;False&lt;/span&gt;
-
-        &lt;span class="c"&gt;# Pass other exceptions to the wrapper, and silence them for now&lt;/span&gt;
-        &lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;corowrapper&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;last_exc&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;value&lt;/span&gt;
-        &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="bp"&gt;True&lt;/span&gt;
-&lt;/pre&gt;
-&lt;/div&gt;</description><guid>http://takluyver.github.io/posts/readable-python-coroutines.html</guid><pubDate>Sun, 10 Nov 2013 14:28:51 GMT</pubDate></item></channel></rss>
+&lt;pre class="code python"&gt;&lt;a name="rest_code_c5bbd9a6eaa74a1caa25394a254feb1b-1"&gt;&lt;/a&gt;&lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;functools&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;wraps&lt;/span&gt;
+&lt;a name="rest_code_c5bbd9a6eaa74a1caa25394a254feb1b-2"&gt;&lt;/a&gt;
+&lt;a name="rest_code_c5bbd9a6eaa74a1caa25394a254feb1b-3"&gt;&lt;/a&gt;&lt;span class="c"&gt;# Tokens&lt;/span&gt;
+&lt;a name="rest_code_c5bbd9a6eaa74a1caa25394a254feb1b-4"&gt;&lt;/a&gt;&lt;span class="n"&gt;receive&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nb"&gt;object&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+&lt;a name="rest_code_c5bbd9a6eaa74a1caa25394a254feb1b-5"&gt;&lt;/a&gt;&lt;span class="n"&gt;get_exception_context&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nb"&gt;object&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+&lt;a name="rest_code_c5bbd9a6eaa74a1caa25394a254feb1b-6"&gt;&lt;/a&gt;
+&lt;a name="rest_code_c5bbd9a6eaa74a1caa25394a254feb1b-7"&gt;&lt;/a&gt;&lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="nc"&gt;CoroutineWrapper&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;object&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+&lt;a name="rest_code_c5bbd9a6eaa74a1caa25394a254feb1b-8"&gt;&lt;/a&gt;    &lt;span class="n"&gt;last_exc&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="bp"&gt;None&lt;/span&gt;
+&lt;a name="rest_code_c5bbd9a6eaa74a1caa25394a254feb1b-9"&gt;&lt;/a&gt;
+&lt;a name="rest_code_c5bbd9a6eaa74a1caa25394a254feb1b-10"&gt;&lt;/a&gt;    &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;__init__&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;generator&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+&lt;a name="rest_code_c5bbd9a6eaa74a1caa25394a254feb1b-11"&gt;&lt;/a&gt;        &lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;gen&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;generator&lt;/span&gt;
+&lt;a name="rest_code_c5bbd9a6eaa74a1caa25394a254feb1b-12"&gt;&lt;/a&gt;
+&lt;a name="rest_code_c5bbd9a6eaa74a1caa25394a254feb1b-13"&gt;&lt;/a&gt;        &lt;span class="n"&gt;ready&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nb"&gt;next&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;gen&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;a name="rest_code_c5bbd9a6eaa74a1caa25394a254feb1b-14"&gt;&lt;/a&gt;        &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="n"&gt;ready&lt;/span&gt; &lt;span class="ow"&gt;is&lt;/span&gt; &lt;span class="n"&gt;get_exception_context&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+&lt;a name="rest_code_c5bbd9a6eaa74a1caa25394a254feb1b-15"&gt;&lt;/a&gt;            &lt;span class="n"&gt;ready&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;gen&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;send&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;ExceptionContext&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+&lt;a name="rest_code_c5bbd9a6eaa74a1caa25394a254feb1b-16"&gt;&lt;/a&gt;        &lt;span class="k"&gt;assert&lt;/span&gt; &lt;span class="n"&gt;ready&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="n"&gt;receive&lt;/span&gt;
+&lt;a name="rest_code_c5bbd9a6eaa74a1caa25394a254feb1b-17"&gt;&lt;/a&gt;
+&lt;a name="rest_code_c5bbd9a6eaa74a1caa25394a254feb1b-18"&gt;&lt;/a&gt;    &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;send&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;arg&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+&lt;a name="rest_code_c5bbd9a6eaa74a1caa25394a254feb1b-19"&gt;&lt;/a&gt;        &lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;last_exc&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="bp"&gt;None&lt;/span&gt;
+&lt;a name="rest_code_c5bbd9a6eaa74a1caa25394a254feb1b-20"&gt;&lt;/a&gt;
+&lt;a name="rest_code_c5bbd9a6eaa74a1caa25394a254feb1b-21"&gt;&lt;/a&gt;        &lt;span class="n"&gt;res&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;gen&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;send&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;arg&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;a name="rest_code_c5bbd9a6eaa74a1caa25394a254feb1b-22"&gt;&lt;/a&gt;        &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="n"&gt;res&lt;/span&gt; &lt;span class="ow"&gt;is&lt;/span&gt; &lt;span class="n"&gt;receive&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+&lt;a name="rest_code_c5bbd9a6eaa74a1caa25394a254feb1b-23"&gt;&lt;/a&gt;            &lt;span class="n"&gt;res&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="bp"&gt;None&lt;/span&gt;
+&lt;a name="rest_code_c5bbd9a6eaa74a1caa25394a254feb1b-24"&gt;&lt;/a&gt;        &lt;span class="k"&gt;else&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+&lt;a name="rest_code_c5bbd9a6eaa74a1caa25394a254feb1b-25"&gt;&lt;/a&gt;            &lt;span class="k"&gt;assert&lt;/span&gt; &lt;span class="nb"&gt;next&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;gen&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="ow"&gt;is&lt;/span&gt; &lt;span class="n"&gt;receive&lt;/span&gt;
+&lt;a name="rest_code_c5bbd9a6eaa74a1caa25394a254feb1b-26"&gt;&lt;/a&gt;
+&lt;a name="rest_code_c5bbd9a6eaa74a1caa25394a254feb1b-27"&gt;&lt;/a&gt;        &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;last_exc&lt;/span&gt; &lt;span class="ow"&gt;is&lt;/span&gt; &lt;span class="ow"&gt;not&lt;/span&gt; &lt;span class="bp"&gt;None&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+&lt;a name="rest_code_c5bbd9a6eaa74a1caa25394a254feb1b-28"&gt;&lt;/a&gt;            &lt;span class="k"&gt;raise&lt;/span&gt; &lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;last_exc&lt;/span&gt;
+&lt;a name="rest_code_c5bbd9a6eaa74a1caa25394a254feb1b-29"&gt;&lt;/a&gt;
+&lt;a name="rest_code_c5bbd9a6eaa74a1caa25394a254feb1b-30"&gt;&lt;/a&gt;        &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;res&lt;/span&gt;
+&lt;a name="rest_code_c5bbd9a6eaa74a1caa25394a254feb1b-31"&gt;&lt;/a&gt;
+&lt;a name="rest_code_c5bbd9a6eaa74a1caa25394a254feb1b-32"&gt;&lt;/a&gt;&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;coroutine&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;genfunc&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+&lt;a name="rest_code_c5bbd9a6eaa74a1caa25394a254feb1b-33"&gt;&lt;/a&gt;    &lt;span class="sd"&gt;"""Decorator for a generator function to wrap it as a coroutine."""&lt;/span&gt;
+&lt;a name="rest_code_c5bbd9a6eaa74a1caa25394a254feb1b-34"&gt;&lt;/a&gt;    &lt;span class="nd"&gt;@wraps&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;genfunc&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;a name="rest_code_c5bbd9a6eaa74a1caa25394a254feb1b-35"&gt;&lt;/a&gt;    &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;wrapped&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;args&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="o"&gt;**&lt;/span&gt;&lt;span class="n"&gt;kwargs&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+&lt;a name="rest_code_c5bbd9a6eaa74a1caa25394a254feb1b-36"&gt;&lt;/a&gt;        &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;CoroutineWrapper&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;genfunc&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;args&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="o"&gt;**&lt;/span&gt;&lt;span class="n"&gt;kwargs&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+&lt;a name="rest_code_c5bbd9a6eaa74a1caa25394a254feb1b-37"&gt;&lt;/a&gt;
+&lt;a name="rest_code_c5bbd9a6eaa74a1caa25394a254feb1b-38"&gt;&lt;/a&gt;    &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;wrapped&lt;/span&gt;
+&lt;a name="rest_code_c5bbd9a6eaa74a1caa25394a254feb1b-39"&gt;&lt;/a&gt;
+&lt;a name="rest_code_c5bbd9a6eaa74a1caa25394a254feb1b-40"&gt;&lt;/a&gt;&lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="nc"&gt;ExceptionContext&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;object&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+&lt;a name="rest_code_c5bbd9a6eaa74a1caa25394a254feb1b-41"&gt;&lt;/a&gt;    &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;__init__&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;corowrapper&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+&lt;a name="rest_code_c5bbd9a6eaa74a1caa25394a254feb1b-42"&gt;&lt;/a&gt;        &lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;corowrapper&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;corowrapper&lt;/span&gt;
+&lt;a name="rest_code_c5bbd9a6eaa74a1caa25394a254feb1b-43"&gt;&lt;/a&gt;
+&lt;a name="rest_code_c5bbd9a6eaa74a1caa25394a254feb1b-44"&gt;&lt;/a&gt;    &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;__enter__&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+&lt;a name="rest_code_c5bbd9a6eaa74a1caa25394a254feb1b-45"&gt;&lt;/a&gt;        &lt;span class="k"&gt;pass&lt;/span&gt;
+&lt;a name="rest_code_c5bbd9a6eaa74a1caa25394a254feb1b-46"&gt;&lt;/a&gt;
+&lt;a name="rest_code_c5bbd9a6eaa74a1caa25394a254feb1b-47"&gt;&lt;/a&gt;    &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;__exit__&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nb"&gt;type&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;value&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;tb&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+&lt;a name="rest_code_c5bbd9a6eaa74a1caa25394a254feb1b-48"&gt;&lt;/a&gt;        &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="nb"&gt;type&lt;/span&gt; &lt;span class="ow"&gt;is&lt;/span&gt; &lt;span class="bp"&gt;None&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+&lt;a name="rest_code_c5bbd9a6eaa74a1caa25394a254feb1b-49"&gt;&lt;/a&gt;            &lt;span class="k"&gt;return&lt;/span&gt;
+&lt;a name="rest_code_c5bbd9a6eaa74a1caa25394a254feb1b-50"&gt;&lt;/a&gt;        &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="nb"&gt;type&lt;/span&gt; &lt;span class="ow"&gt;is&lt;/span&gt; &lt;span class="ne"&gt;GeneratorExit&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+&lt;a name="rest_code_c5bbd9a6eaa74a1caa25394a254feb1b-51"&gt;&lt;/a&gt;            &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="bp"&gt;False&lt;/span&gt;
+&lt;a name="rest_code_c5bbd9a6eaa74a1caa25394a254feb1b-52"&gt;&lt;/a&gt;
+&lt;a name="rest_code_c5bbd9a6eaa74a1caa25394a254feb1b-53"&gt;&lt;/a&gt;        &lt;span class="c"&gt;# Pass other exceptions to the wrapper, and silence them for now&lt;/span&gt;
+&lt;a name="rest_code_c5bbd9a6eaa74a1caa25394a254feb1b-54"&gt;&lt;/a&gt;        &lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;corowrapper&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;last_exc&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;value&lt;/span&gt;
+&lt;a name="rest_code_c5bbd9a6eaa74a1caa25394a254feb1b-55"&gt;&lt;/a&gt;        &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="bp"&gt;True&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;</description><guid>http://takluyver.github.io/posts/readable-python-coroutines.html</guid><pubDate>Sun, 10 Nov 2013 14:28:51 GMT</pubDate></item></channel></rss>

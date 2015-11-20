@@ -1,2 +1,4 @@
 Sitemap: http://takluyver.github.io/sitemapindex.xml
 
+User-Agent: *
+Host: takluyver.github.io

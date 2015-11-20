@@ -3,46 +3,30 @@
 og: http://ogp.me/ns#
 article: http://ogp.me/ns/article#
 " lang="en">
-    <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width">
-    <title>Readable Python coroutines | Codel</title>
-
-                <link href="../assets/css/all-nocdn.css" rel="stylesheet" type="text/css">
-
-                <link rel="alternate" type="application/rss+xml" title="RSS" href="../rss.xml">
-
-      <link rel="canonical" href="http://takluyver.github.io/posts/readable-python-coroutines.html">
-
-
-
-    
-        <!--[if lt IE 9]><script src="/assets/js/html5.js"></script><![endif]-->
-
-    
-<link rel="stylesheet" type="text/css" href="../assets/css/custom.css">
-
-
-    
-    <meta name="author" content="Thomas Kluyver">
-            <meta name="og:title" content="Readable Python coroutines">
-        <meta name="og:url" content="http://takluyver.github.io/posts/readable-python-coroutines.html">
-            <meta name="og:description" content="Quick exercise: write a piece of code that, each time you pass it a word (a
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width">
+<title>Readable Python coroutines | Codel</title>
+<link href="../assets/css/all-nocdn.css" rel="stylesheet" type="text/css">
+<link rel="alternate" type="application/rss+xml" title="RSS" href="../rss.xml">
+<link rel="canonical" href="http://takluyver.github.io/posts/readable-python-coroutines.html">
+<!--[if lt IE 9]><script src="/assets/js/html5.js"></script><![endif]--><link rel="stylesheet" type="text/css" href="../assets/css/custom.css">
+<meta name="author" content="Thomas Kluyver">
+<link rel="next" href="astsearch-code-searching-that-knows-about-code.html" title="ASTsearch - code searching that knows about code" type="text/html">
+<meta property="og:site_name" content="Codel">
+<meta property="og:title" content="Readable Python coroutines">
+<meta property="og:url" content="http://takluyver.github.io/posts/readable-python-coroutines.html">
+<meta property="og:description" content="Quick exercise: write a piece of code that, each time you pass it a word (a
 string), tells you if you've passed it that word before. If you're reading a
 post with a title like this, it shouldn't take ">
-        <meta name="og:site_name" content="Codel">
-        <meta name="og:type" content="article">
-
-    
-    
-
+<meta property="og:type" content="article">
+<meta property="article:published_time" content="2013-11-10T14:28:51Z">
 </head>
 <body>
 
 <!-- Menubar -->
 
-<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
-    <div class="container">
+<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation"><div class="container">
 <!-- This keeps the margins nice -->
         <div class="navbar-header">
             <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
@@ -59,7 +43,7 @@ post with a title like this, it shouldn't take ">
 <!-- /.navbar-header -->
         <div class="collapse navbar-collapse navbar-ex1-collapse">
             <ul class="nav navbar-nav">
-                                <li>
+<li>
 <a href="../archive.html">Archives</a>
                 </li>
 <li>
@@ -71,30 +55,23 @@ post with a title like this, it shouldn't take ">
                 
             </li>
 </ul>
-
-            <ul class="nav navbar-nav navbar-right">
-                
-            </ul>
-        </div>
+<ul class="nav navbar-nav navbar-right"></ul>
+</div>
 <!-- /.navbar-collapse -->
     </div>
 <!-- /.container -->
-</nav>
-
-<!-- End of Menubar -->
-
-<div class="container">
+</nav><!-- End of Menubar --><div class="container">
     <div class="body-content">
         <!--Body content-->
         <div class="row">
             
-<article class="post-text h-entry hentry postpage" itemscope="itemscope" itemtype="http://schema.org/Article">
-        <header>
-            <h1 class="p-name entry-title" itemprop="headline name"><a href="#" class="u-url">Readable Python coroutines</a></h1>
+<article class="post-text h-entry hentry postpage" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title" itemprop="headline name"><a href="#" class="u-url">Readable Python coroutines</a></h1>
 
         <div class="metadata">
-            <p class="byline author vcard"><span class="byline-name fn">Thomas Kluyver</span></p>
-            <p class="dateline"><a href="#" rel="bookmark"><time class="published dt-published" datetime="2013-11-10T14:28:51+00:00" itemprop="datePublished" title="Publication date">2013-11-10 14:28</time></a></p>
+            <p class="byline author vcard"><span class="byline-name fn">
+                    Thomas Kluyver
+            </span></p>
+            <p class="dateline"><a href="#" rel="bookmark"><time class="published dt-published" datetime="2013-11-10T14:28:51Z" itemprop="datePublished" title="2013-11-10 14:28">2013-11-10 14:28</time></a></p>
                 <p class="commentline">            <a href="readable-python-coroutines.html#disqus_thread" data-disqus-identifier="cache/posts/readable-python-coroutines.html">Comments</a>
 
 
@@ -103,10 +80,9 @@ post with a title like this, it shouldn't take ">
 
         </div>
         
-    </header>
-
-    <div class="e-content entry-content" itemprop="articleBody text">
-    <p>Quick exercise: write a piece of code that, each time you pass it a word (a
+    </header><div class="e-content entry-content" itemprop="articleBody text">
+    <div>
+<p>Quick exercise: write a piece of code that, each time you pass it a word (a
 string), tells you if you've passed it that word before. If you're reading a
 post with a title like this, it shouldn't take you more than a few minutes. For
 bonus points, have an option to ignore case, so it counts 'parrot' and 'Parrot'
@@ -114,18 +90,17 @@ as the same word.</p>
 <p>What did you go for? A function with a global variable (yuck!)? A class with a
 method? A closure?</p>
 <p>How about a coroutine? Here's what that would look like:</p>
-<pre class="code python literal-block">
-<span class="k">def</span> <span class="nf">have_seen</span><span class="p">(</span><span class="n">case_sensitive</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
-    <span class="n">seen</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
-
-    <span class="n">res</span> <span class="o">=</span> <span class="bp">None</span>
-    <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
-        <span class="n">word</span> <span class="o">=</span> <span class="p">(</span><span class="k">yield</span> <span class="n">res</span><span class="p">)</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">case_sensitive</span><span class="p">:</span>
-            <span class="n">word</span> <span class="o">=</span> <span class="n">word</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
-
-        <span class="n">res</span> <span class="o">=</span> <span class="p">(</span><span class="n">word</span> <span class="ow">in</span> <span class="n">seen</span><span class="p">)</span>
-        <span class="n">seen</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">word</span><span class="p">)</span>
+<pre class="code python"><a name="rest_code_3fc202ee168147efa2a3f87de07a25c5-1"></a><span class="k">def</span> <span class="nf">have_seen</span><span class="p">(</span><span class="n">case_sensitive</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+<a name="rest_code_3fc202ee168147efa2a3f87de07a25c5-2"></a>    <span class="n">seen</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+<a name="rest_code_3fc202ee168147efa2a3f87de07a25c5-3"></a>
+<a name="rest_code_3fc202ee168147efa2a3f87de07a25c5-4"></a>    <span class="n">res</span> <span class="o">=</span> <span class="bp">None</span>
+<a name="rest_code_3fc202ee168147efa2a3f87de07a25c5-5"></a>    <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
+<a name="rest_code_3fc202ee168147efa2a3f87de07a25c5-6"></a>        <span class="n">word</span> <span class="o">=</span> <span class="p">(</span><span class="k">yield</span> <span class="n">res</span><span class="p">)</span>
+<a name="rest_code_3fc202ee168147efa2a3f87de07a25c5-7"></a>        <span class="k">if</span> <span class="ow">not</span> <span class="n">case_sensitive</span><span class="p">:</span>
+<a name="rest_code_3fc202ee168147efa2a3f87de07a25c5-8"></a>            <span class="n">word</span> <span class="o">=</span> <span class="n">word</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+<a name="rest_code_3fc202ee168147efa2a3f87de07a25c5-9"></a>
+<a name="rest_code_3fc202ee168147efa2a3f87de07a25c5-10"></a>        <span class="n">res</span> <span class="o">=</span> <span class="p">(</span><span class="n">word</span> <span class="ow">in</span> <span class="n">seen</span><span class="p">)</span>
+<a name="rest_code_3fc202ee168147efa2a3f87de07a25c5-11"></a>        <span class="n">seen</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">word</span><span class="p">)</span>
 </pre>
 <p>And here's how you would use it:</p>
 <pre class="literal-block">
@@ -156,20 +131,19 @@ but that doesn't make the code inside the coroutine any clearer.</li>
 <p>So the standard Python syntax is rather awkward. But we can make it clearer by
 using a bit of wrapper code.
 The trick is separating sending a value from receiving one:</p>
-<pre class="code python literal-block">
-<span class="kn">from</span> <span class="nn">coromagic</span> <span class="kn">import</span> <span class="n">coroutine</span><span class="p">,</span> <span class="n">receive</span>
-
-<span class="nd">@coroutine</span>
-<span class="k">def</span> <span class="nf">have_seen2</span><span class="p">(</span><span class="n">case_sensitive</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
-    <span class="n">seen</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
-
-    <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
-        <span class="n">word</span> <span class="o">=</span> <span class="p">(</span><span class="k">yield</span> <span class="n">receive</span><span class="p">)</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">case_sensitive</span><span class="p">:</span>
-            <span class="n">word</span> <span class="o">=</span> <span class="n">word</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
-
-        <span class="k">yield</span> <span class="p">(</span><span class="n">word</span> <span class="ow">in</span> <span class="n">seen</span><span class="p">)</span>
-        <span class="n">seen</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">word</span><span class="p">)</span>
+<pre class="code python"><a name="rest_code_d61b15d6119841e6826c9294dfccaef8-1"></a><span class="kn">from</span> <span class="nn">coromagic</span> <span class="kn">import</span> <span class="n">coroutine</span><span class="p">,</span> <span class="n">receive</span>
+<a name="rest_code_d61b15d6119841e6826c9294dfccaef8-2"></a>
+<a name="rest_code_d61b15d6119841e6826c9294dfccaef8-3"></a><span class="nd">@coroutine</span>
+<a name="rest_code_d61b15d6119841e6826c9294dfccaef8-4"></a><span class="k">def</span> <span class="nf">have_seen2</span><span class="p">(</span><span class="n">case_sensitive</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+<a name="rest_code_d61b15d6119841e6826c9294dfccaef8-5"></a>    <span class="n">seen</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+<a name="rest_code_d61b15d6119841e6826c9294dfccaef8-6"></a>
+<a name="rest_code_d61b15d6119841e6826c9294dfccaef8-7"></a>    <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
+<a name="rest_code_d61b15d6119841e6826c9294dfccaef8-8"></a>        <span class="n">word</span> <span class="o">=</span> <span class="p">(</span><span class="k">yield</span> <span class="n">receive</span><span class="p">)</span>
+<a name="rest_code_d61b15d6119841e6826c9294dfccaef8-9"></a>        <span class="k">if</span> <span class="ow">not</span> <span class="n">case_sensitive</span><span class="p">:</span>
+<a name="rest_code_d61b15d6119841e6826c9294dfccaef8-10"></a>            <span class="n">word</span> <span class="o">=</span> <span class="n">word</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+<a name="rest_code_d61b15d6119841e6826c9294dfccaef8-11"></a>
+<a name="rest_code_d61b15d6119841e6826c9294dfccaef8-12"></a>        <span class="k">yield</span> <span class="p">(</span><span class="n">word</span> <span class="ow">in</span> <span class="n">seen</span><span class="p">)</span>
+<a name="rest_code_d61b15d6119841e6826c9294dfccaef8-13"></a>        <span class="n">seen</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">word</span><span class="p">)</span>
 </pre>
 <p>We no longer need the <cite>res</cite> variable. Instead, we alternate between two uses of
 yield: a receiving yield, where we send the wrapper a token to indicate that
@@ -199,22 +173,21 @@ StopIteration
 </pre>
 <p>I've got a solution of sorts for that, although it still feels a bit awkward.
 The coroutine can request a context manager to catch exceptions:</p>
-<pre class="code python literal-block">
-<span class="kn">from</span> <span class="nn">coromagic</span> <span class="kn">import</span> <span class="n">get_exception_context</span>
-
-<span class="nd">@coroutine</span>
-<span class="k">def</span> <span class="nf">have_seen3</span><span class="p">(</span><span class="n">case_sensitive</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
-    <span class="n">exception_context</span> <span class="o">=</span> <span class="p">(</span><span class="k">yield</span> <span class="n">get_exception_context</span><span class="p">)</span>
-    <span class="n">seen</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
-
-    <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
-        <span class="k">with</span> <span class="n">exception_context</span><span class="p">:</span>
-            <span class="n">word</span> <span class="o">=</span> <span class="p">(</span><span class="k">yield</span> <span class="n">receive</span><span class="p">)</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="n">case_sensitive</span><span class="p">:</span>
-                <span class="n">word</span> <span class="o">=</span> <span class="n">word</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
-
-            <span class="k">yield</span> <span class="p">(</span><span class="n">word</span> <span class="ow">in</span> <span class="n">seen</span><span class="p">)</span>
-            <span class="n">seen</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">word</span><span class="p">)</span>
+<pre class="code python"><a name="rest_code_a41751ad7d114f73970dea5e06755474-1"></a><span class="kn">from</span> <span class="nn">coromagic</span> <span class="kn">import</span> <span class="n">get_exception_context</span>
+<a name="rest_code_a41751ad7d114f73970dea5e06755474-2"></a>
+<a name="rest_code_a41751ad7d114f73970dea5e06755474-3"></a><span class="nd">@coroutine</span>
+<a name="rest_code_a41751ad7d114f73970dea5e06755474-4"></a><span class="k">def</span> <span class="nf">have_seen3</span><span class="p">(</span><span class="n">case_sensitive</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+<a name="rest_code_a41751ad7d114f73970dea5e06755474-5"></a>    <span class="n">exception_context</span> <span class="o">=</span> <span class="p">(</span><span class="k">yield</span> <span class="n">get_exception_context</span><span class="p">)</span>
+<a name="rest_code_a41751ad7d114f73970dea5e06755474-6"></a>    <span class="n">seen</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+<a name="rest_code_a41751ad7d114f73970dea5e06755474-7"></a>
+<a name="rest_code_a41751ad7d114f73970dea5e06755474-8"></a>    <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
+<a name="rest_code_a41751ad7d114f73970dea5e06755474-9"></a>        <span class="k">with</span> <span class="n">exception_context</span><span class="p">:</span>
+<a name="rest_code_a41751ad7d114f73970dea5e06755474-10"></a>            <span class="n">word</span> <span class="o">=</span> <span class="p">(</span><span class="k">yield</span> <span class="n">receive</span><span class="p">)</span>
+<a name="rest_code_a41751ad7d114f73970dea5e06755474-11"></a>            <span class="k">if</span> <span class="ow">not</span> <span class="n">case_sensitive</span><span class="p">:</span>
+<a name="rest_code_a41751ad7d114f73970dea5e06755474-12"></a>                <span class="n">word</span> <span class="o">=</span> <span class="n">word</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+<a name="rest_code_a41751ad7d114f73970dea5e06755474-13"></a>
+<a name="rest_code_a41751ad7d114f73970dea5e06755474-14"></a>            <span class="k">yield</span> <span class="p">(</span><span class="n">word</span> <span class="ow">in</span> <span class="n">seen</span><span class="p">)</span>
+<a name="rest_code_a41751ad7d114f73970dea5e06755474-15"></a>            <span class="n">seen</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">word</span><span class="p">)</span>
 </pre>
 <p>The context manager co-ordinates with the wrapper to suppress the exception inside the coroutine, but raise it to the caller:</p>
 <pre class="literal-block">
@@ -246,23 +219,22 @@ short, but here's my attempt. We're writing a plugin for a chat
 application, which lets any chatter say "password foo", silencing everyone until
 someone guesses "foo". The application just passes us each message, and expects
 a True/False response saying whether it should be broadcast.</p>
-<pre class="code python literal-block">
-<span class="nd">@coroutine</span>
-<span class="k">def</span> <span class="nf">password_game</span><span class="p">():</span>
-    <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
-        <span class="c"># Normal chatting</span>
-        <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="k">yield</span> <span class="n">receive</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">msg</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">"password "</span><span class="p">):</span>
-                <span class="n">password</span> <span class="o">=</span> <span class="n">msg</span><span class="p">[</span><span class="mi">9</span><span class="p">:]</span>
-                <span class="k">yield</span> <span class="bp">False</span>
-                <span class="k">break</span>
-            <span class="k">yield</span> <span class="bp">True</span>  <span class="c"># Broadcast</span>
-
-        <span class="c"># Waiting for someone to guess the password</span>
-        <span class="k">while</span> <span class="p">(</span><span class="k">yield</span> <span class="n">receive</span><span class="p">)</span> <span class="o">!=</span> <span class="n">password</span><span class="p">:</span>
-            <span class="k">yield</span> <span class="bp">False</span> <span class="c"># Don't send messages</span>
-        <span class="k">yield</span> <span class="bp">True</span>   <span class="c"># Show everyone the password once it has been guessed</span>
+<pre class="code python"><a name="rest_code_a79909d828644a43b8b0c60a3ea33e04-1"></a><span class="nd">@coroutine</span>
+<a name="rest_code_a79909d828644a43b8b0c60a3ea33e04-2"></a><span class="k">def</span> <span class="nf">password_game</span><span class="p">():</span>
+<a name="rest_code_a79909d828644a43b8b0c60a3ea33e04-3"></a>    <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
+<a name="rest_code_a79909d828644a43b8b0c60a3ea33e04-4"></a>        <span class="c"># Normal chatting</span>
+<a name="rest_code_a79909d828644a43b8b0c60a3ea33e04-5"></a>        <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
+<a name="rest_code_a79909d828644a43b8b0c60a3ea33e04-6"></a>            <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="k">yield</span> <span class="n">receive</span><span class="p">)</span>
+<a name="rest_code_a79909d828644a43b8b0c60a3ea33e04-7"></a>            <span class="k">if</span> <span class="n">msg</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">"password "</span><span class="p">):</span>
+<a name="rest_code_a79909d828644a43b8b0c60a3ea33e04-8"></a>                <span class="n">password</span> <span class="o">=</span> <span class="n">msg</span><span class="p">[</span><span class="mi">9</span><span class="p">:]</span>
+<a name="rest_code_a79909d828644a43b8b0c60a3ea33e04-9"></a>                <span class="k">yield</span> <span class="bp">False</span>
+<a name="rest_code_a79909d828644a43b8b0c60a3ea33e04-10"></a>                <span class="k">break</span>
+<a name="rest_code_a79909d828644a43b8b0c60a3ea33e04-11"></a>            <span class="k">yield</span> <span class="bp">True</span>  <span class="c"># Broadcast</span>
+<a name="rest_code_a79909d828644a43b8b0c60a3ea33e04-12"></a>
+<a name="rest_code_a79909d828644a43b8b0c60a3ea33e04-13"></a>        <span class="c"># Waiting for someone to guess the password</span>
+<a name="rest_code_a79909d828644a43b8b0c60a3ea33e04-14"></a>        <span class="k">while</span> <span class="p">(</span><span class="k">yield</span> <span class="n">receive</span><span class="p">)</span> <span class="o">!=</span> <span class="n">password</span><span class="p">:</span>
+<a name="rest_code_a79909d828644a43b8b0c60a3ea33e04-15"></a>            <span class="k">yield</span> <span class="bp">False</span> <span class="c"># Don't send messages</span>
+<a name="rest_code_a79909d828644a43b8b0c60a3ea33e04-16"></a>        <span class="k">yield</span> <span class="bp">True</span>   <span class="c"># Show everyone the password once it has been guessed</span>
 </pre>
 <p>In IPython, we have some coroutines for input processing. For instance, the
 transformer to strip prompts from pasted code processes the first two lines in a
@@ -284,78 +256,70 @@ ready.</p>
 <h2>Coromagic source code</h2>
 <p>This is the module used in the examples above.</p>
 <p><a class="reference external" href="../listings/coromagic.py.html">coromagic.py</a></p>
-<pre class="code python literal-block">
-<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">wraps</span>
-
-<span class="c"># Tokens</span>
-<span class="n">receive</span> <span class="o">=</span> <span class="nb">object</span><span class="p">()</span>
-<span class="n">get_exception_context</span> <span class="o">=</span> <span class="nb">object</span><span class="p">()</span>
-
-<span class="k">class</span> <span class="nc">CoroutineWrapper</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-    <span class="n">last_exc</span> <span class="o">=</span> <span class="bp">None</span>
-
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">generator</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">gen</span> <span class="o">=</span> <span class="n">generator</span>
-
-        <span class="n">ready</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">gen</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">ready</span> <span class="ow">is</span> <span class="n">get_exception_context</span><span class="p">:</span>
-            <span class="n">ready</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gen</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">ExceptionContext</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
-        <span class="k">assert</span> <span class="n">ready</span> <span class="o">==</span> <span class="n">receive</span>
-
-    <span class="k">def</span> <span class="nf">send</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">arg</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">last_exc</span> <span class="o">=</span> <span class="bp">None</span>
-
-        <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gen</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">arg</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">res</span> <span class="ow">is</span> <span class="n">receive</span><span class="p">:</span>
-            <span class="n">res</span> <span class="o">=</span> <span class="bp">None</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">assert</span> <span class="nb">next</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">gen</span><span class="p">)</span> <span class="ow">is</span> <span class="n">receive</span>
-
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_exc</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_exc</span>
-
-        <span class="k">return</span> <span class="n">res</span>
-
-<span class="k">def</span> <span class="nf">coroutine</span><span class="p">(</span><span class="n">genfunc</span><span class="p">):</span>
-    <span class="sd">"""Decorator for a generator function to wrap it as a coroutine."""</span>
-    <span class="nd">@wraps</span><span class="p">(</span><span class="n">genfunc</span><span class="p">)</span>
-    <span class="k">def</span> <span class="nf">wrapped</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">CoroutineWrapper</span><span class="p">(</span><span class="n">genfunc</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">))</span>
-
-    <span class="k">return</span> <span class="n">wrapped</span>
-
-<span class="k">class</span> <span class="nc">ExceptionContext</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">corowrapper</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">corowrapper</span> <span class="o">=</span> <span class="n">corowrapper</span>
-
-    <span class="k">def</span> <span class="nf">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">pass</span>
-
-    <span class="k">def</span> <span class="nf">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">type</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">tb</span><span class="p">):</span>
-        <span class="k">if</span> <span class="nb">type</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="k">return</span>
-        <span class="k">if</span> <span class="nb">type</span> <span class="ow">is</span> <span class="ne">GeneratorExit</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">False</span>
-
-        <span class="c"># Pass other exceptions to the wrapper, and silence them for now</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">corowrapper</span><span class="o">.</span><span class="n">last_exc</span> <span class="o">=</span> <span class="n">value</span>
-        <span class="k">return</span> <span class="bp">True</span>
+<pre class="code python"><a name="rest_code_c5bbd9a6eaa74a1caa25394a254feb1b-1"></a><span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">wraps</span>
+<a name="rest_code_c5bbd9a6eaa74a1caa25394a254feb1b-2"></a>
+<a name="rest_code_c5bbd9a6eaa74a1caa25394a254feb1b-3"></a><span class="c"># Tokens</span>
+<a name="rest_code_c5bbd9a6eaa74a1caa25394a254feb1b-4"></a><span class="n">receive</span> <span class="o">=</span> <span class="nb">object</span><span class="p">()</span>
+<a name="rest_code_c5bbd9a6eaa74a1caa25394a254feb1b-5"></a><span class="n">get_exception_context</span> <span class="o">=</span> <span class="nb">object</span><span class="p">()</span>
+<a name="rest_code_c5bbd9a6eaa74a1caa25394a254feb1b-6"></a>
+<a name="rest_code_c5bbd9a6eaa74a1caa25394a254feb1b-7"></a><span class="k">class</span> <span class="nc">CoroutineWrapper</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<a name="rest_code_c5bbd9a6eaa74a1caa25394a254feb1b-8"></a>    <span class="n">last_exc</span> <span class="o">=</span> <span class="bp">None</span>
+<a name="rest_code_c5bbd9a6eaa74a1caa25394a254feb1b-9"></a>
+<a name="rest_code_c5bbd9a6eaa74a1caa25394a254feb1b-10"></a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">generator</span><span class="p">):</span>
+<a name="rest_code_c5bbd9a6eaa74a1caa25394a254feb1b-11"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">gen</span> <span class="o">=</span> <span class="n">generator</span>
+<a name="rest_code_c5bbd9a6eaa74a1caa25394a254feb1b-12"></a>
+<a name="rest_code_c5bbd9a6eaa74a1caa25394a254feb1b-13"></a>        <span class="n">ready</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">gen</span><span class="p">)</span>
+<a name="rest_code_c5bbd9a6eaa74a1caa25394a254feb1b-14"></a>        <span class="k">if</span> <span class="n">ready</span> <span class="ow">is</span> <span class="n">get_exception_context</span><span class="p">:</span>
+<a name="rest_code_c5bbd9a6eaa74a1caa25394a254feb1b-15"></a>            <span class="n">ready</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gen</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">ExceptionContext</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
+<a name="rest_code_c5bbd9a6eaa74a1caa25394a254feb1b-16"></a>        <span class="k">assert</span> <span class="n">ready</span> <span class="o">==</span> <span class="n">receive</span>
+<a name="rest_code_c5bbd9a6eaa74a1caa25394a254feb1b-17"></a>
+<a name="rest_code_c5bbd9a6eaa74a1caa25394a254feb1b-18"></a>    <span class="k">def</span> <span class="nf">send</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">arg</span><span class="p">):</span>
+<a name="rest_code_c5bbd9a6eaa74a1caa25394a254feb1b-19"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">last_exc</span> <span class="o">=</span> <span class="bp">None</span>
+<a name="rest_code_c5bbd9a6eaa74a1caa25394a254feb1b-20"></a>
+<a name="rest_code_c5bbd9a6eaa74a1caa25394a254feb1b-21"></a>        <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gen</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">arg</span><span class="p">)</span>
+<a name="rest_code_c5bbd9a6eaa74a1caa25394a254feb1b-22"></a>        <span class="k">if</span> <span class="n">res</span> <span class="ow">is</span> <span class="n">receive</span><span class="p">:</span>
+<a name="rest_code_c5bbd9a6eaa74a1caa25394a254feb1b-23"></a>            <span class="n">res</span> <span class="o">=</span> <span class="bp">None</span>
+<a name="rest_code_c5bbd9a6eaa74a1caa25394a254feb1b-24"></a>        <span class="k">else</span><span class="p">:</span>
+<a name="rest_code_c5bbd9a6eaa74a1caa25394a254feb1b-25"></a>            <span class="k">assert</span> <span class="nb">next</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">gen</span><span class="p">)</span> <span class="ow">is</span> <span class="n">receive</span>
+<a name="rest_code_c5bbd9a6eaa74a1caa25394a254feb1b-26"></a>
+<a name="rest_code_c5bbd9a6eaa74a1caa25394a254feb1b-27"></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_exc</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+<a name="rest_code_c5bbd9a6eaa74a1caa25394a254feb1b-28"></a>            <span class="k">raise</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_exc</span>
+<a name="rest_code_c5bbd9a6eaa74a1caa25394a254feb1b-29"></a>
+<a name="rest_code_c5bbd9a6eaa74a1caa25394a254feb1b-30"></a>        <span class="k">return</span> <span class="n">res</span>
+<a name="rest_code_c5bbd9a6eaa74a1caa25394a254feb1b-31"></a>
+<a name="rest_code_c5bbd9a6eaa74a1caa25394a254feb1b-32"></a><span class="k">def</span> <span class="nf">coroutine</span><span class="p">(</span><span class="n">genfunc</span><span class="p">):</span>
+<a name="rest_code_c5bbd9a6eaa74a1caa25394a254feb1b-33"></a>    <span class="sd">"""Decorator for a generator function to wrap it as a coroutine."""</span>
+<a name="rest_code_c5bbd9a6eaa74a1caa25394a254feb1b-34"></a>    <span class="nd">@wraps</span><span class="p">(</span><span class="n">genfunc</span><span class="p">)</span>
+<a name="rest_code_c5bbd9a6eaa74a1caa25394a254feb1b-35"></a>    <span class="k">def</span> <span class="nf">wrapped</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<a name="rest_code_c5bbd9a6eaa74a1caa25394a254feb1b-36"></a>        <span class="k">return</span> <span class="n">CoroutineWrapper</span><span class="p">(</span><span class="n">genfunc</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">))</span>
+<a name="rest_code_c5bbd9a6eaa74a1caa25394a254feb1b-37"></a>
+<a name="rest_code_c5bbd9a6eaa74a1caa25394a254feb1b-38"></a>    <span class="k">return</span> <span class="n">wrapped</span>
+<a name="rest_code_c5bbd9a6eaa74a1caa25394a254feb1b-39"></a>
+<a name="rest_code_c5bbd9a6eaa74a1caa25394a254feb1b-40"></a><span class="k">class</span> <span class="nc">ExceptionContext</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<a name="rest_code_c5bbd9a6eaa74a1caa25394a254feb1b-41"></a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">corowrapper</span><span class="p">):</span>
+<a name="rest_code_c5bbd9a6eaa74a1caa25394a254feb1b-42"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">corowrapper</span> <span class="o">=</span> <span class="n">corowrapper</span>
+<a name="rest_code_c5bbd9a6eaa74a1caa25394a254feb1b-43"></a>
+<a name="rest_code_c5bbd9a6eaa74a1caa25394a254feb1b-44"></a>    <span class="k">def</span> <span class="nf">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<a name="rest_code_c5bbd9a6eaa74a1caa25394a254feb1b-45"></a>        <span class="k">pass</span>
+<a name="rest_code_c5bbd9a6eaa74a1caa25394a254feb1b-46"></a>
+<a name="rest_code_c5bbd9a6eaa74a1caa25394a254feb1b-47"></a>    <span class="k">def</span> <span class="nf">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">type</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">tb</span><span class="p">):</span>
+<a name="rest_code_c5bbd9a6eaa74a1caa25394a254feb1b-48"></a>        <span class="k">if</span> <span class="nb">type</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+<a name="rest_code_c5bbd9a6eaa74a1caa25394a254feb1b-49"></a>            <span class="k">return</span>
+<a name="rest_code_c5bbd9a6eaa74a1caa25394a254feb1b-50"></a>        <span class="k">if</span> <span class="nb">type</span> <span class="ow">is</span> <span class="ne">GeneratorExit</span><span class="p">:</span>
+<a name="rest_code_c5bbd9a6eaa74a1caa25394a254feb1b-51"></a>            <span class="k">return</span> <span class="bp">False</span>
+<a name="rest_code_c5bbd9a6eaa74a1caa25394a254feb1b-52"></a>
+<a name="rest_code_c5bbd9a6eaa74a1caa25394a254feb1b-53"></a>        <span class="c"># Pass other exceptions to the wrapper, and silence them for now</span>
+<a name="rest_code_c5bbd9a6eaa74a1caa25394a254feb1b-54"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">corowrapper</span><span class="o">.</span><span class="n">last_exc</span> <span class="o">=</span> <span class="n">value</span>
+<a name="rest_code_c5bbd9a6eaa74a1caa25394a254feb1b-55"></a>        <span class="k">return</span> <span class="bp">True</span>
 </pre>
 </div>
+</div>
     </div>
-    <aside class="postpromonav">
-    <nav>
-    
-            <ul class="pager">
-            <li class="next">
+    <aside class="postpromonav"><nav><ul class="pager hidden-print">
+<li class="next">
                 <a href="astsearch-code-searching-that-knows-about-code.html" rel="next" title="ASTsearch - code searching that knows about code">Next post</a>
             </li>
-        </ul>
-
-    </nav>
-    </aside>
-        <section class="comments">
-        <h2>Comments</h2>
+        </ul></nav></aside><section class="comments hidden-print"><h2>Comments</h2>
                         <div id="disqus_thread"></div>
         <script>
         var disqus_shortname ="takluyverblog",
@@ -363,61 +327,29 @@ ready.</p>
         disqus_title="Readable Python coroutines",
         disqus_identifier="cache/posts/readable-python-coroutines.html",
         disqus_config = function () {
-            this.language = "";
+            this.language = "en";
         };
         (function() {
             var dsq = document.createElement('script'); dsq.async = true;
             dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
             (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
         })();
-    </script>
-    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a>
+    </script><noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a>
 </noscript>
     <a href="//disqus.com" class="dsq-brlink" rel="nofollow">Comments powered by <span class="logo-disqus">Disqus</span></a>
 
 
-        </section>
-    
-</article>
-               <script>var disqus_shortname="takluyverblog";(function(){var a=document.createElement("script");a.async=true;a.src="//"+disqus_shortname+".disqus.com/count.js";(document.getElementsByTagName("head")[0]||document.getElementsByTagName("body")[0]).appendChild(a)}());</script>
-
-
-        </div>
+        </section></article><script>var disqus_shortname="takluyverblog";(function(){var a=document.createElement("script");a.async=true;a.src="//"+disqus_shortname+".disqus.com/count.js";(document.getElementsByTagName("head")[0]||document.getElementsByTagName("body")[0]).appendChild(a)}());</script>
+</div>
         <!--End of body content-->
 
         <footer>
-            Contents © 2014         <a href="mailto:takowl@gmail.com">Thomas Kluyver</a> - Powered by         <a href="http://nikola.ralsina.com.ar">Nikola</a>
+            Contents © 2015         <a href="mailto:takowl@gmail.com">Thomas Kluyver</a> - Powered by         <a href="http://nikola.ralsina.com.ar">Nikola</a>
             
         </footer>
-    </div>
+</div>
 </div>
 
-            <script src="../assets/js/all-nocdn.js"></script>
-    
-<!-- Social buttons -->
-<div id="addthisbox" class="addthis_toolbox addthis_peekaboo_style addthis_default_style addthis_label_style addthis_32x32_style">
-<a class="addthis_button_more">Share</a>
-<ul>
-<li>
-<a class="addthis_button_facebook"></a>
-</li>
-<li>
-<a class="addthis_button_google_plusone_share"></a>
-</li>
-<li>
-<a class="addthis_button_linkedin"></a>
-</li>
-<li>
-<a class="addthis_button_twitter"></a>
-</li>
-</ul>
-</div>
-<script src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-4f7088a56bb93798"></script>
-<!-- End of social buttons -->
-
-
-    <script>jQuery("a.image-reference").colorbox({rel:"gal",maxWidth:"100%",maxHeight:"100%",scalePhotos:true});</script>
-
-
+            <script src="../assets/js/all-nocdn.js"></script><script>jQuery("a.image-reference").colorbox({rel:"gal",maxWidth:"100%",maxHeight:"100%",scalePhotos:true});</script>
 </body>
 </html>
