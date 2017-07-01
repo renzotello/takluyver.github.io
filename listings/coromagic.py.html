@@ -8,12 +8,7 @@ article: http://ogp.me/ns/article#
 <meta name="description" content="coromagic.py">
 <meta name="viewport" content="width=device-width">
 <title>coromagic.py | Codel</title>
-<link href="../assets/css/bootstrap.min.css" rel="stylesheet" type="text/css">
-<link href="../assets/css/rst.css" rel="stylesheet" type="text/css">
-<link href="../assets/css/code.css" rel="stylesheet" type="text/css">
-<link href="../assets/css/colorbox.css" rel="stylesheet" type="text/css">
-<link href="../assets/css/theme.css" rel="stylesheet" type="text/css">
-<link href="../assets/css/custom.css" rel="stylesheet" type="text/css">
+<link href="../assets/css/all-nocdn.css" rel="stylesheet" type="text/css">
 <link rel="alternate" type="application/rss+xml" title="RSS" href="../rss.xml">
 <link rel="canonical" href="http://takluyver.github.io/listings/coromagic.py.html">
 <!--[if lt IE 9]><script src="/assets/js/html5.js"></script><![endif]--><link rel="stylesheet" type="text/css" href="../assets/css/custom.css">
@@ -128,14 +123,14 @@ article: http://ogp.me/ns/article#
 <a href="#listingscoromagicpy-56">56</a></pre></div></td>
 <td class="code"><pre class="code literal-block"><a name="listingscoromagicpy-1"></a><span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">wraps</span>
 <a name="listingscoromagicpy-2"></a>
-<a name="listingscoromagicpy-3"></a><span class="c"># Tokens</span>
+<a name="listingscoromagicpy-3"></a><span class="c1"># Tokens</span>
 <a name="listingscoromagicpy-4"></a><span class="n">receive</span> <span class="o">=</span> <span class="nb">object</span><span class="p">()</span>
 <a name="listingscoromagicpy-5"></a><span class="n">get_exception_context</span> <span class="o">=</span> <span class="nb">object</span><span class="p">()</span>
 <a name="listingscoromagicpy-6"></a>
 <a name="listingscoromagicpy-7"></a><span class="k">class</span> <span class="nc">CoroutineWrapper</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 <a name="listingscoromagicpy-8"></a>    <span class="n">last_exc</span> <span class="o">=</span> <span class="bp">None</span>
 <a name="listingscoromagicpy-9"></a>    
-<a name="listingscoromagicpy-10"></a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">generator</span><span class="p">):</span>
+<a name="listingscoromagicpy-10"></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">generator</span><span class="p">):</span>
 <a name="listingscoromagicpy-11"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">gen</span> <span class="o">=</span> <span class="n">generator</span>
 <a name="listingscoromagicpy-12"></a>        
 <a name="listingscoromagicpy-13"></a>        <span class="n">ready</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">gen</span><span class="p">)</span>
@@ -166,19 +161,19 @@ article: http://ogp.me/ns/article#
 <a name="listingscoromagicpy-38"></a>    <span class="k">return</span> <span class="n">wrapped</span>
 <a name="listingscoromagicpy-39"></a>
 <a name="listingscoromagicpy-40"></a><span class="k">class</span> <span class="nc">ExceptionContext</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-<a name="listingscoromagicpy-41"></a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">corowrapper</span><span class="p">):</span>
+<a name="listingscoromagicpy-41"></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">corowrapper</span><span class="p">):</span>
 <a name="listingscoromagicpy-42"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">corowrapper</span> <span class="o">=</span> <span class="n">corowrapper</span>
 <a name="listingscoromagicpy-43"></a>    
-<a name="listingscoromagicpy-44"></a>    <span class="k">def</span> <span class="nf">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<a name="listingscoromagicpy-44"></a>    <span class="k">def</span> <span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <a name="listingscoromagicpy-45"></a>        <span class="k">pass</span>
 <a name="listingscoromagicpy-46"></a>    
-<a name="listingscoromagicpy-47"></a>    <span class="k">def</span> <span class="nf">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">type</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">tb</span><span class="p">):</span>
+<a name="listingscoromagicpy-47"></a>    <span class="k">def</span> <span class="fm">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">type</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">tb</span><span class="p">):</span>
 <a name="listingscoromagicpy-48"></a>        <span class="k">if</span> <span class="nb">type</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
 <a name="listingscoromagicpy-49"></a>            <span class="k">return</span>
 <a name="listingscoromagicpy-50"></a>        <span class="k">if</span> <span class="nb">type</span> <span class="ow">is</span> <span class="ne">GeneratorExit</span><span class="p">:</span>
 <a name="listingscoromagicpy-51"></a>            <span class="k">return</span> <span class="bp">False</span>
 <a name="listingscoromagicpy-52"></a>        
-<a name="listingscoromagicpy-53"></a>        <span class="c"># Pass other exceptions to the wrapper, and silence them for now</span>
+<a name="listingscoromagicpy-53"></a>        <span class="c1"># Pass other exceptions to the wrapper, and silence them for now</span>
 <a name="listingscoromagicpy-54"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">corowrapper</span><span class="o">.</span><span class="n">last_exc</span> <span class="o">=</span> <span class="n">value</span>
 <a name="listingscoromagicpy-55"></a>        <span class="k">return</span> <span class="bp">True</span>
 <a name="listingscoromagicpy-56"></a>            
@@ -188,12 +183,12 @@ article: http://ogp.me/ns/article#
         <!--End of body content-->
 
         <footer>
-            Contents © 2016         <a href="mailto:takowl@gmail.com">Thomas Kluyver</a> - Powered by         <a href="http://nikola.ralsina.com.ar">Nikola</a>
+            Contents © 2017         <a href="mailto:takowl@gmail.com">Thomas Kluyver</a> - Powered by         <a href="http://nikola.ralsina.com.ar">Nikola</a>
             
         </footer>
 </div>
 </div>
 
-            <script src="../assets/js/jquery.min.js"></script><script src="../assets/js/bootstrap.min.js"></script><script src="../assets/js/jquery.colorbox-min.js"></script><script>jQuery("a.image-reference").colorbox({rel:"gal",maxWidth:"100%",maxHeight:"100%",scalePhotos:true});</script>
+            <script src="../assets/js/all-nocdn.js"></script><script>jQuery("a.image-reference").colorbox({rel:"gal",maxWidth:"100%",maxHeight:"100%",scalePhotos:true});</script>
 </body>
 </html>

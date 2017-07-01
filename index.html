@@ -8,16 +8,11 @@ article: http://ogp.me/ns/article#
 <meta name="description" content="Thoughts about code">
 <meta name="viewport" content="width=device-width">
 <title>Codel | Codel</title>
-<link href="assets/css/bootstrap.min.css" rel="stylesheet" type="text/css">
-<link href="assets/css/rst.css" rel="stylesheet" type="text/css">
-<link href="assets/css/code.css" rel="stylesheet" type="text/css">
-<link href="assets/css/colorbox.css" rel="stylesheet" type="text/css">
-<link href="assets/css/theme.css" rel="stylesheet" type="text/css">
-<link href="assets/css/custom.css" rel="stylesheet" type="text/css">
+<link href="assets/css/all-nocdn.css" rel="stylesheet" type="text/css">
 <link rel="alternate" type="application/rss+xml" title="RSS" href="rss.xml">
 <link rel="canonical" href="http://takluyver.github.io/index.html">
 <!--[if lt IE 9]><script src="/assets/js/html5.js"></script><![endif]--><link rel="stylesheet" type="text/css" href="assets/css/custom.css">
-<link rel="prefetch" href="posts/why-did-i-write-yet-another-package-manager.html" type="text/html">
+<link rel="prefetch" href="posts/understanding-dbus.html" type="text/html">
 </head>
 <body>
 
@@ -63,10 +58,117 @@ article: http://ogp.me/ns/article#
         <div class="row">
             
     
+    
 <div class="postindex">
-    <article class="h-entry post-text"><header><h1 class="p-name entry-title"><a href="posts/why-did-i-write-yet-another-package-manager.html" class="u-url">Why did I write yet another package manager?</a></h1>
+    <article class="h-entry post-text"><header><h1 class="p-name entry-title"><a href="posts/understanding-dbus.html" class="u-url">Understanding DBus</a></h1>
         <div class="metadata">
-            <p class="byline author vcard"><span class="byline-name fn">
+            <p class="byline author vcard"><span class="byline-name fn" itemprop="author">
+                Thomas Kluyver
+            </span></p>
+            <p class="dateline"><a href="posts/understanding-dbus.html" rel="bookmark"><time class="published dt-published" datetime="2017-07-01T17:16:35Z" title="2017-07-01 17:16">2017-07-01 17:16</time></a></p>
+                <p class="commentline">            <a href="posts/understanding-dbus.html#disqus_thread" data-disqus-identifier="cache/posts/understanding-dbus.html">Comments</a>
+
+
+        </p>
+</div>
+    </header><div class="e-content entry-content">
+    <div>
+<p>If you use desktop Linux, like I do, D-Bus is working behind the scenes to do
+things like storing passwords and displaying notifications - and probably many
+more things I'm not even aware of.</p>
+<p>I've run into D-Bus a couple of times, and found it confusing,
+so I volunteered to do a short talk about it at <a class="reference external" href="http://portsmouth.lug.org.uk/">Portsmouth LUG</a>,
+forcing myself to sit down and understand it.
+I've come to like <em>parts</em> of it,
+and I even wrote a Python D-Bus interface called Jeepney.
+But it's complicated, and I haven't found an explanation I like.
+So this is what I think is worth understanding about D-Bus.
+It's not a tutorial about how to use D-Bus, but if you've copied and pasted
+D-Bus code from somewhere, it might help you use it better.</p>
+<div class="section" id="it-s-about-messages">
+<h2>It's about messages</h2>
+<p>D-Bus is a framework for different programs to communicate. That means they send
+each other messages. Unfortunately, that simple idea gets a bit buried by the
+Java-inspired, non-optional object-oriented layers on top of the messages.</p>
+<p>Guess which parts I still don't like.</p>
+<p>There are two messaging patterns on offer:</p>
+<img alt="/images/dbus_methods_signals.png" class="align-center" src="images/dbus_methods_signals.png"><ol class="arabic simple">
+<li>
+<strong>Method calls</strong> go to a single destination, and get a reply, which is either
+a <strong>method return</strong>, or an <strong>error</strong>.</li>
+<li>
+<strong>Signals</strong> are sent out to anyone who's interested, and there's no response.</li>
+</ol>
+<p>That's four message types in total, including returns and errors.
+All four can carry data: different kinds of number,
+UTF-8 strings, arrays and dictionaries,
+and it's even possible to transfer a file descriptor in a D-Bus message.</p>
+<p><strong>The bus</strong> is the hub that passes messages on to the right destinations. All
+the other programs using D-Bus send and receive messages through the bus. You
+can also send messages to the bus itself, to tell it who you are or to
+subscribe to a signal.</p>
+<p>There are normally two buses available:
+the <em>session bus</em> is for your login (e.g. desktop notifications),
+while the <em>system bus</em> handles system-wide stuff (e.g. USB stick plugged in).</p>
+</div>
+<div class="section" id="names-names-names">
+<h2>Names, names, names</h2>
+<p>To show a desktop notification, you'll send messages
+to the object <tt class="docutils literal">/org/freedesktop/Notifications</tt>,
+using the interface <tt class="docutils literal">org.freedesktop.Notifications</tt>,
+on the bus name <tt class="docutils literal">org.freedesktop.Notifications</tt>.
+Ugh. Why so many names?</p>
+<p>The <strong>bus name</strong> is which program you're talking to. Each program that connects
+to the bus gets a unique name automatically (like <tt class="docutils literal">:1.247</tt>).
+It can then claim other names, like <tt class="docutils literal">org.freedesktop.Notifications</tt>.
+The bus ensures that only one program has each name.
+On my laptop, Gnome shell has claimed <tt class="docutils literal">org.freedesktop.Notifications</tt>,
+along with many other names.</p>
+<p>If you send a message to a bus name which isn't claimed,
+the bus may be able to start a program to handle it.
+This is called <em>D-Bus activation</em>,
+and it's governed by simple files saying which program to start for which name.</p>
+<p>The <strong>object path</strong> refers to something inside the program which will handle the message.
+For notifications, there's only one object to deal with: <tt class="docutils literal">/org/freedesktop/Notifications</tt>.
+But the secrets API provided by Gnome keyring, for instance,
+has an object for each secret stored, such as
+<tt class="docutils literal">/org/freedesktop/secrets/collections/login/2</tt>.</p>
+<p>Finally, the <strong>interface</strong> indicates which set of methods and signals are to be used with the object.
+There's usually only one interface that's interesting for applications,
+but most objects also have some standard interfaces like
+<tt class="docutils literal">org.freedesktop.DBus.Introspectable</tt>, which you can use to examine the
+methods and signals of an object.</p>
+<p>All these names start with reversed domain names,
+so people don't accidentally use the same name for different things.
+The examples I've given are defined by <tt class="docutils literal">freedesktop.org</tt>.
+If I was defining my own D-Bus API, the names might look like
+<tt class="docutils literal">io.github.takluyver.projectname</tt>.</p>
+</div>
+<div class="section" id="developer-tools">
+<h2>Developer tools</h2>
+<p>There are a couple of nice tools available for investigating D-Bus:</p>
+<img alt="D-Feet screenshot" class="screenshot align-center" src="images/dfeet.png"><p><em>D-Feet</em> shows you what D-Bus objects there are on your system,
+the methods you can call and signals you can subscribe to.
+It can also execute methods and show you the results, but this feels a bit clunky.</p>
+<img alt="Bustle screenshot" class="screenshot align-center" src="images/bustle.png"><p><em>Bustle</em> records and shows messages being sent over D-Bus.
+There's also a command line tool called <tt class="docutils literal"><span class="pre">dbus-monitor</span></tt> which serves a similar
+purpose.</p>
+</div>
+<div class="section" id="other-details">
+<h2>Other details</h2>
+<p>D-Bus uses Unix sockets, which are like network sockets but within one computer.
+Unix sockets are pretty clever in their own right.
+Each bus creates one Unix socket, and programs connect to it to talk to the bus.</p>
+<p>Actually, D-Bus can also run over network sockets, or a number of other transports.
+Two processes can also use the protocol without a bus running.
+This is all <a class="reference external" href="https://dbus.freedesktop.org/doc/dbus-specification.html#transports">in the spec</a>,
+but the usual way to use D-Bus is with a bus and a Unix socket.</p>
+</div>
+</div>
+    </div>
+    </article><article class="h-entry post-text"><header><h1 class="p-name entry-title"><a href="posts/why-did-i-write-yet-another-package-manager.html" class="u-url">Why did I write yet another package manager?</a></h1>
+        <div class="metadata">
+            <p class="byline author vcard"><span class="byline-name fn" itemprop="author">
                 Thomas Kluyver
             </span></p>
             <p class="dateline"><a href="posts/why-did-i-write-yet-another-package-manager.html" rel="bookmark"><time class="published dt-published" datetime="2015-11-20T13:06:47Z" title="2015-11-20 13:06">2015-11-20 13:06</time></a></p>
@@ -77,6 +179,10 @@ article: http://ogp.me/ns/article#
 </div>
     </header><div class="e-content entry-content">
     <div>
+<p><strong>Update July 2017</strong>: Batis is no longer maintained. I think something like it
+would have been great a few years earlier, but now I hope that <a class="reference external" href="http://flatpak.org/">Flatpak</a>
+or <a class="reference external" href="https://snapcraft.io/">Snaps</a> will give us a better option for distributing
+desktop applications.</p>
 <p><a class="reference external" href="http://batis-installer.github.io/">Batis</a> is a package manager for desktop applications on Linux.
 Linux users are probably already used to using several different package managers -
 apt, pip, npm, etc. - so why on earth do we need one more?</p>
@@ -146,7 +252,7 @@ plain tarballs.</p>
     </div>
     </article><article class="h-entry post-text"><header><h1 class="p-name entry-title"><a href="posts/so-you-want-to-write-a-desktop-app-in-python.html" class="u-url">So you want to write a desktop app in Python</a></h1>
         <div class="metadata">
-            <p class="byline author vcard"><span class="byline-name fn">
+            <p class="byline author vcard"><span class="byline-name fn" itemprop="author">
                 Thomas Kluyver
             </span></p>
             <p class="dateline"><a href="posts/so-you-want-to-write-a-desktop-app-in-python.html" rel="bookmark"><time class="published dt-published" datetime="2014-06-16T23:55:03Z" title="2014-06-16 23:55">2014-06-16 23:55</time></a></p>
@@ -290,7 +396,7 @@ updating frozen Python applications. I haven't tried it, but it looks interestin
     </div>
     </article><article class="h-entry post-text"><header><h1 class="p-name entry-title"><a href="posts/astsearch-code-searching-that-knows-about-code.html" class="u-url">ASTsearch - code searching that knows about code</a></h1>
         <div class="metadata">
-            <p class="byline author vcard"><span class="byline-name fn">
+            <p class="byline author vcard"><span class="byline-name fn" itemprop="author">
                 Thomas Kluyver
             </span></p>
             <p class="dateline"><a href="posts/astsearch-code-searching-that-knows-about-code.html" rel="bookmark"><time class="published dt-published" datetime="2014-04-27T17:39:44Z" title="2014-04-27 17:39">2014-04-27 17:39</time></a></p>
@@ -392,7 +498,7 @@ pip install astsearch
     </div>
     </article><article class="h-entry post-text"><header><h1 class="p-name entry-title"><a href="posts/readable-python-coroutines.html" class="u-url">Readable Python coroutines</a></h1>
         <div class="metadata">
-            <p class="byline author vcard"><span class="byline-name fn">
+            <p class="byline author vcard"><span class="byline-name fn" itemprop="author">
                 Thomas Kluyver
             </span></p>
             <p class="dateline"><a href="posts/readable-python-coroutines.html" rel="bookmark"><time class="published dt-published" datetime="2013-11-10T14:28:51Z" title="2013-11-10 14:28">2013-11-10 14:28</time></a></p>
@@ -644,12 +750,12 @@ ready.</p>
         <!--End of body content-->
 
         <footer>
-            Contents © 2016         <a href="mailto:takowl@gmail.com">Thomas Kluyver</a> - Powered by         <a href="http://nikola.ralsina.com.ar">Nikola</a>
+            Contents © 2017         <a href="mailto:takowl@gmail.com">Thomas Kluyver</a> - Powered by         <a href="http://nikola.ralsina.com.ar">Nikola</a>
             
         </footer>
 </div>
 </div>
 
-            <script src="assets/js/jquery.min.js"></script><script src="assets/js/bootstrap.min.js"></script><script src="assets/js/jquery.colorbox-min.js"></script><script>jQuery("a.image-reference").colorbox({rel:"gal",maxWidth:"100%",maxHeight:"100%",scalePhotos:true});</script>
+            <script src="assets/js/all-nocdn.js"></script><script>jQuery("a.image-reference").colorbox({rel:"gal",maxWidth:"100%",maxHeight:"100%",scalePhotos:true});</script>
 </body>
 </html>

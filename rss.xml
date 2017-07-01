@@ -1,5 +1,100 @@
 <?xml version="1.0" encoding="utf-8"?>
-<?xml-stylesheet type="text/xsl" href="assets/xml/rss.xsl" media="all"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>Codel</title><link>http://takluyver.github.io/</link><description>Thoughts about code</description><atom:link rel="self" type="application/rss+xml" href="http://takluyver.github.io/rss.xml"></atom:link><language>en</language><lastBuildDate>Sat, 20 Feb 2016 10:16:52 GMT</lastBuildDate><generator>https://getnikola.com/</generator><docs>http://blogs.law.harvard.edu/tech/rss</docs><item><title>Why did I write yet another package manager?</title><link>http://takluyver.github.io/posts/why-did-i-write-yet-another-package-manager.html</link><dc:creator>Thomas Kluyver</dc:creator><description>&lt;div&gt;&lt;p&gt;&lt;a class="reference external" href="http://batis-installer.github.io/"&gt;Batis&lt;/a&gt; is a package manager for desktop applications on Linux.
+<?xml-stylesheet type="text/xsl" href="assets/xml/rss.xsl" media="all"?><rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Codel</title><link>http://takluyver.github.io/</link><description>Thoughts about code</description><atom:link type="application/rss+xml" rel="self" href="http://takluyver.github.io/rss.xml"></atom:link><language>en</language><lastBuildDate>Sat, 01 Jul 2017 21:31:53 GMT</lastBuildDate><generator>Nikola (getnikola.com)</generator><docs>http://blogs.law.harvard.edu/tech/rss</docs><item><title>Understanding DBus</title><link>http://takluyver.github.io/posts/understanding-dbus.html</link><dc:creator>Thomas Kluyver</dc:creator><description>&lt;div&gt;&lt;p&gt;If you use desktop Linux, like I do, D-Bus is working behind the scenes to do
+things like storing passwords and displaying notifications - and probably many
+more things I'm not even aware of.&lt;/p&gt;
+&lt;p&gt;I've run into D-Bus a couple of times, and found it confusing,
+so I volunteered to do a short talk about it at &lt;a class="reference external" href="http://portsmouth.lug.org.uk/"&gt;Portsmouth LUG&lt;/a&gt;,
+forcing myself to sit down and understand it.
+I've come to like &lt;em&gt;parts&lt;/em&gt; of it,
+and I even wrote a Python D-Bus interface called Jeepney.
+But it's complicated, and I haven't found an explanation I like.
+So this is what I think is worth understanding about D-Bus.
+It's not a tutorial about how to use D-Bus, but if you've copied and pasted
+D-Bus code from somewhere, it might help you use it better.&lt;/p&gt;
+&lt;div class="section" id="it-s-about-messages"&gt;
+&lt;h2&gt;It's about messages&lt;/h2&gt;
+&lt;p&gt;D-Bus is a framework for different programs to communicate. That means they send
+each other messages. Unfortunately, that simple idea gets a bit buried by the
+Java-inspired, non-optional object-oriented layers on top of the messages.&lt;/p&gt;
+&lt;p&gt;Guess which parts I still don't like.&lt;/p&gt;
+&lt;p&gt;There are two messaging patterns on offer:&lt;/p&gt;
+&lt;img alt="/images/dbus_methods_signals.png" class="align-center" src="http://takluyver.github.io/images/dbus_methods_signals.png"&gt;
+&lt;ol class="arabic simple"&gt;
+&lt;li&gt;&lt;strong&gt;Method calls&lt;/strong&gt; go to a single destination, and get a reply, which is either
+a &lt;strong&gt;method return&lt;/strong&gt;, or an &lt;strong&gt;error&lt;/strong&gt;.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Signals&lt;/strong&gt; are sent out to anyone who's interested, and there's no response.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;That's four message types in total, including returns and errors.
+All four can carry data: different kinds of number,
+UTF-8 strings, arrays and dictionaries,
+and it's even possible to transfer a file descriptor in a D-Bus message.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;The bus&lt;/strong&gt; is the hub that passes messages on to the right destinations. All
+the other programs using D-Bus send and receive messages through the bus. You
+can also send messages to the bus itself, to tell it who you are or to
+subscribe to a signal.&lt;/p&gt;
+&lt;p&gt;There are normally two buses available:
+the &lt;em&gt;session bus&lt;/em&gt; is for your login (e.g. desktop notifications),
+while the &lt;em&gt;system bus&lt;/em&gt; handles system-wide stuff (e.g. USB stick plugged in).&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="section" id="names-names-names"&gt;
+&lt;h2&gt;Names, names, names&lt;/h2&gt;
+&lt;p&gt;To show a desktop notification, you'll send messages
+to the object &lt;tt class="docutils literal"&gt;/org/freedesktop/Notifications&lt;/tt&gt;,
+using the interface &lt;tt class="docutils literal"&gt;org.freedesktop.Notifications&lt;/tt&gt;,
+on the bus name &lt;tt class="docutils literal"&gt;org.freedesktop.Notifications&lt;/tt&gt;.
+Ugh. Why so many names?&lt;/p&gt;
+&lt;p&gt;The &lt;strong&gt;bus name&lt;/strong&gt; is which program you're talking to. Each program that connects
+to the bus gets a unique name automatically (like &lt;tt class="docutils literal"&gt;:1.247&lt;/tt&gt;).
+It can then claim other names, like &lt;tt class="docutils literal"&gt;org.freedesktop.Notifications&lt;/tt&gt;.
+The bus ensures that only one program has each name.
+On my laptop, Gnome shell has claimed &lt;tt class="docutils literal"&gt;org.freedesktop.Notifications&lt;/tt&gt;,
+along with many other names.&lt;/p&gt;
+&lt;p&gt;If you send a message to a bus name which isn't claimed,
+the bus may be able to start a program to handle it.
+This is called &lt;em&gt;D-Bus activation&lt;/em&gt;,
+and it's governed by simple files saying which program to start for which name.&lt;/p&gt;
+&lt;p&gt;The &lt;strong&gt;object path&lt;/strong&gt; refers to something inside the program which will handle the message.
+For notifications, there's only one object to deal with: &lt;tt class="docutils literal"&gt;/org/freedesktop/Notifications&lt;/tt&gt;.
+But the secrets API provided by Gnome keyring, for instance,
+has an object for each secret stored, such as
+&lt;tt class="docutils literal"&gt;/org/freedesktop/secrets/collections/login/2&lt;/tt&gt;.&lt;/p&gt;
+&lt;p&gt;Finally, the &lt;strong&gt;interface&lt;/strong&gt; indicates which set of methods and signals are to be used with the object.
+There's usually only one interface that's interesting for applications,
+but most objects also have some standard interfaces like
+&lt;tt class="docutils literal"&gt;org.freedesktop.DBus.Introspectable&lt;/tt&gt;, which you can use to examine the
+methods and signals of an object.&lt;/p&gt;
+&lt;p&gt;All these names start with reversed domain names,
+so people don't accidentally use the same name for different things.
+The examples I've given are defined by &lt;tt class="docutils literal"&gt;freedesktop.org&lt;/tt&gt;.
+If I was defining my own D-Bus API, the names might look like
+&lt;tt class="docutils literal"&gt;io.github.takluyver.projectname&lt;/tt&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="section" id="developer-tools"&gt;
+&lt;h2&gt;Developer tools&lt;/h2&gt;
+&lt;p&gt;There are a couple of nice tools available for investigating D-Bus:&lt;/p&gt;
+&lt;img alt="D-Feet screenshot" class="screenshot align-center" src="http://takluyver.github.io/images/dfeet.png"&gt;
+&lt;p&gt;&lt;em&gt;D-Feet&lt;/em&gt; shows you what D-Bus objects there are on your system,
+the methods you can call and signals you can subscribe to.
+It can also execute methods and show you the results, but this feels a bit clunky.&lt;/p&gt;
+&lt;img alt="Bustle screenshot" class="screenshot align-center" src="http://takluyver.github.io/images/bustle.png"&gt;
+&lt;p&gt;&lt;em&gt;Bustle&lt;/em&gt; records and shows messages being sent over D-Bus.
+There's also a command line tool called &lt;tt class="docutils literal"&gt;&lt;span class="pre"&gt;dbus-monitor&lt;/span&gt;&lt;/tt&gt; which serves a similar
+purpose.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="section" id="other-details"&gt;
+&lt;h2&gt;Other details&lt;/h2&gt;
+&lt;p&gt;D-Bus uses Unix sockets, which are like network sockets but within one computer.
+Unix sockets are pretty clever in their own right.
+Each bus creates one Unix socket, and programs connect to it to talk to the bus.&lt;/p&gt;
+&lt;p&gt;Actually, D-Bus can also run over network sockets, or a number of other transports.
+Two processes can also use the protocol without a bus running.
+This is all &lt;a class="reference external" href="https://dbus.freedesktop.org/doc/dbus-specification.html#transports"&gt;in the spec&lt;/a&gt;,
+but the usual way to use D-Bus is with a bus and a Unix socket.&lt;/p&gt;
+&lt;/div&gt;&lt;/div&gt;</description><guid>http://takluyver.github.io/posts/understanding-dbus.html</guid><pubDate>Sat, 01 Jul 2017 17:16:35 GMT</pubDate></item><item><title>Why did I write yet another package manager?</title><link>http://takluyver.github.io/posts/why-did-i-write-yet-another-package-manager.html</link><dc:creator>Thomas Kluyver</dc:creator><description>&lt;div&gt;&lt;p&gt;&lt;strong&gt;Update July 2017&lt;/strong&gt;: Batis is no longer maintained. I think something like it
+would have been great a few years earlier, but now I hope that &lt;a class="reference external" href="http://flatpak.org/"&gt;Flatpak&lt;/a&gt;
+or &lt;a class="reference external" href="https://snapcraft.io/"&gt;Snaps&lt;/a&gt; will give us a better option for distributing
+desktop applications.&lt;/p&gt;
+&lt;p&gt;&lt;a class="reference external" href="http://batis-installer.github.io/"&gt;Batis&lt;/a&gt; is a package manager for desktop applications on Linux.
 Linux users are probably already used to using several different package managers -
 apt, pip, npm, etc. - so why on earth do we need one more?&lt;/p&gt;
 &lt;p&gt;Firstly, having many package managers is not a problem.
