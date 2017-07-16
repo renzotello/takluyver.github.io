@@ -12,7 +12,7 @@ article: http://ogp.me/ns/article#
 <link rel="alternate" type="application/rss+xml" title="RSS" href="rss.xml">
 <link rel="canonical" href="http://takluyver.github.io/index.html">
 <!--[if lt IE 9]><script src="/assets/js/html5.js"></script><![endif]--><link rel="stylesheet" type="text/css" href="assets/css/custom.css">
-<link rel="prefetch" href="posts/understanding-dbus.html" type="text/html">
+<link rel="prefetch" href="posts/i-cant-import-it.html" type="text/html">
 </head>
 <body>
 
@@ -60,7 +60,78 @@ article: http://ogp.me/ns/article#
     
     
 <div class="postindex">
-    <article class="h-entry post-text"><header><h1 class="p-name entry-title"><a href="posts/understanding-dbus.html" class="u-url">Understanding D-Bus</a></h1>
+    <article class="h-entry post-text"><header><h1 class="p-name entry-title"><a href="posts/i-cant-import-it.html" class="u-url">I can't import it!</a></h1>
+        <div class="metadata">
+            <p class="byline author vcard"><span class="byline-name fn" itemprop="author">
+                Thomas Kluyver
+            </span></p>
+            <p class="dateline"><a href="posts/i-cant-import-it.html" rel="bookmark"><time class="published dt-published" datetime="2017-07-16T08:42:52Z" title="2017-07-16 08:42">2017-07-16 08:42</time></a></p>
+                <p class="commentline">            <a href="posts/i-cant-import-it.html#disqus_thread" data-disqus-identifier="cache/posts/i-cant-import-it.html">Comments</a>
+
+
+        </p>
+</div>
+    </header><div class="e-content entry-content">
+    <div>
+<p>Have you installed a Python package, but now you can't import it?
+Or can you import it when you run code one way,
+but not when you run code another way?</p>
+<p>These are common problems, and this post is an attempt to explain what's
+going on and how you can fix it.
+If someone has sent you a link here, they're not trying to be rude:
+we can help more people more effectively by sharing a detailed explanation
+than by writing a short explanation each time.</p>
+<div class="section" id="lots-of-pythons">
+<h2>Lots of Pythons</h2>
+<p>There's probably more than one copy of Python on your computer.
+When you run code in different ways, it might get run by different Pythons.
+To see which Python is running your code, run:</p>
+<pre class="code python"><a name="rest_code_e3b7f58a3c3f4dd5841c7e7bad2b2ba0-1"></a><span class="kn">import</span> <span class="nn">sys</span>
+<a name="rest_code_e3b7f58a3c3f4dd5841c7e7bad2b2ba0-2"></a><span class="k">print</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">executable</span><span class="p">)</span>
+</pre>
+<p>On my laptop, all of these are different Pythons (and they aren't all of them):</p>
+<ul class="simple">
+<li>
+<tt class="docutils literal">/usr/bin/python</tt> (system Python 2)</li>
+<li>
+<tt class="docutils literal">/usr/bin/python3</tt> (system Python 3)</li>
+<li>
+<tt class="docutils literal">/home/takluyver/miniconda3/bin/python</tt> (Python in conda)</li>
+<li>
+<tt class="docutils literal">/home/takluyver/miniconda3/envs/py36/bin/python</tt> (a separate conda environment)</li>
+</ul>
+<p>Each conda environment, virtualenv or pyenv you create is a separate Python.
+But you can also have different names for the <em>same</em> Python -- e.g.
+<tt class="docutils literal">/usr/bin/python3</tt> is the same as <tt class="docutils literal">/usr/bin/python3.5</tt> on my laptop (it's
+a 'symlink').</p>
+<p>Each Python installation or environment has its own package folder. When you
+install a package, it's being installed for one particular Python, which might
+not be the one you are trying to load it from.</p>
+<p>You can also see all of the places that <tt class="docutils literal">import</tt> will look for a module by
+running:</p>
+<pre class="code python"><a name="rest_code_ceb81375faa04458a7ebc832d1ad95e0-1"></a><span class="kn">import</span> <span class="nn">sys</span>
+<a name="rest_code_ceb81375faa04458a7ebc832d1ad95e0-2"></a><span class="k">print</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="p">)</span>
+</pre>
+</div>
+<div class="section" id="what-can-i-do">
+<h2>What can I do?</h2>
+<p>First, use the code above to find which Python is running your code.</p>
+<p><strong>Option 1</strong>: Install the package for the same Python you're using.</p>
+<p>With pip, this is easy:</p>
+<pre class="literal-block">
+path/to/python -m pip install some_package
+</pre>
+<p>If you want to install it with conda, activate the conda environment
+containing the Python you're using, and then run <tt class="docutils literal">conda install some_package</tt>.</p>
+<p><strong>Option 2</strong>: Switch to use a Python where the module you want is installed.</p>
+<p>It's hard to provide instructions for this, because it depends on the tools
+you're using. If you're using an IDE, look in the settings. Here it is in
+Pycharm, for instance:</p>
+<img alt="/images/pycharm_interpreter_settings.png" class="align-center" src="images/pycharm_interpreter_settings.png">
+</div>
+</div>
+    </div>
+    </article><article class="h-entry post-text"><header><h1 class="p-name entry-title"><a href="posts/understanding-dbus.html" class="u-url">Understanding D-Bus</a></h1>
         <div class="metadata">
             <p class="byline author vcard"><span class="byline-name fn" itemprop="author">
                 Thomas Kluyver
