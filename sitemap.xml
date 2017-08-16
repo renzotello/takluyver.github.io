@@ -7,27 +7,27 @@
                         http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
  <url>
   <loc>http://takluyver.github.io/2013/index.html</loc>
-  <lastmod>2017-07-01T17:15:00Z</lastmod>
+  <lastmod>2017-08-16T17:57:00Z</lastmod>
  </url>
  <url>
   <loc>http://takluyver.github.io/2014/index.html</loc>
-  <lastmod>2017-07-01T17:15:00Z</lastmod>
+  <lastmod>2017-08-16T17:57:00Z</lastmod>
  </url>
  <url>
   <loc>http://takluyver.github.io/2015/index.html</loc>
-  <lastmod>2017-07-01T17:15:00Z</lastmod>
+  <lastmod>2017-08-16T17:57:00Z</lastmod>
  </url>
  <url>
   <loc>http://takluyver.github.io/2017/index.html</loc>
-  <lastmod>2017-07-16T09:21:00Z</lastmod>
+  <lastmod>2017-08-16T18:51:00Z</lastmod>
  </url>
  <url>
   <loc>http://takluyver.github.io/archive.html</loc>
-  <lastmod>2017-07-16T09:15:00Z</lastmod>
+  <lastmod>2017-08-16T17:57:00Z</lastmod>
  </url>
  <url>
   <loc>http://takluyver.github.io/categories/index.html</loc>
-  <lastmod>2017-07-01T17:15:00Z</lastmod>
+  <lastmod>2017-08-16T17:57:00Z</lastmod>
  </url>
  <url>
   <loc>http://takluyver.github.io/galleries/index.html</loc>
@@ -35,7 +35,7 @@
  </url>
  <url>
   <loc>http://takluyver.github.io/index.html</loc>
-  <lastmod>2017-07-16T09:21:00Z</lastmod>
+  <lastmod>2017-08-16T18:51:00Z</lastmod>
  </url>
  <url>
   <loc>http://takluyver.github.io/listings/__pycache__/index.html</loc>
@@ -43,35 +43,39 @@
  </url>
  <url>
   <loc>http://takluyver.github.io/listings/coromagic.py.html</loc>
-  <lastmod>2017-07-01T17:15:00Z</lastmod>
+  <lastmod>2017-08-16T17:57:00Z</lastmod>
  </url>
  <url>
   <loc>http://takluyver.github.io/listings/index.html</loc>
-  <lastmod>2017-07-01T17:15:00Z</lastmod>
+  <lastmod>2017-08-16T17:57:00Z</lastmod>
  </url>
  <url>
   <loc>http://takluyver.github.io/posts/astsearch-code-searching-that-knows-about-code.html</loc>
-  <lastmod>2017-07-01T17:15:00Z</lastmod>
+  <lastmod>2017-08-16T17:57:00Z</lastmod>
  </url>
  <url>
   <loc>http://takluyver.github.io/posts/i-cant-import-it.html</loc>
-  <lastmod>2017-07-16T09:21:00Z</lastmod>
+  <lastmod>2017-08-16T17:57:00Z</lastmod>
  </url>
  <url>
   <loc>http://takluyver.github.io/posts/readable-python-coroutines.html</loc>
-  <lastmod>2017-07-01T17:15:00Z</lastmod>
+  <lastmod>2017-08-16T17:57:00Z</lastmod>
  </url>
  <url>
   <loc>http://takluyver.github.io/posts/so-you-want-to-write-a-desktop-app-in-python.html</loc>
-  <lastmod>2017-07-01T17:15:00Z</lastmod>
+  <lastmod>2017-08-16T17:57:00Z</lastmod>
  </url>
  <url>
   <loc>http://takluyver.github.io/posts/understanding-dbus.html</loc>
-  <lastmod>2017-07-16T09:15:00Z</lastmod>
+  <lastmod>2017-08-16T17:57:00Z</lastmod>
  </url>
  <url>
   <loc>http://takluyver.github.io/posts/why-did-i-write-yet-another-package-manager.html</loc>
-  <lastmod>2017-07-01T18:37:00Z</lastmod>
+  <lastmod>2017-08-16T17:57:00Z</lastmod>
+ </url>
+ <url>
+  <loc>http://takluyver.github.io/posts/why-we-love-the-terminal.html</loc>
+  <lastmod>2017-08-16T18:51:00Z</lastmod>
  </url>
  <url>
   <loc>http://takluyver.github.io/posts/writing-readable-python-coroutines.html</loc>

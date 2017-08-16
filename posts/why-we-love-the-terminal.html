@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html prefix="
+og: http://ogp.me/ns#
+article: http://ogp.me/ns/article#
+" lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width">
+<title>Why do we love the terminal? | Codel</title>
+<link href="../assets/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+<link href="../assets/css/rst.css" rel="stylesheet" type="text/css">
+<link href="../assets/css/code.css" rel="stylesheet" type="text/css">
+<link href="../assets/css/colorbox.css" rel="stylesheet" type="text/css">
+<link href="../assets/css/theme.css" rel="stylesheet" type="text/css">
+<link href="../assets/css/custom.css" rel="stylesheet" type="text/css">
+<link rel="alternate" type="application/rss+xml" title="RSS" href="../rss.xml">
+<link rel="canonical" href="http://takluyver.github.io/posts/why-we-love-the-terminal.html">
+<!--[if lt IE 9]><script src="/assets/js/html5.js"></script><![endif]--><link rel="stylesheet" type="text/css" href="../assets/css/custom.css">
+<meta name="author" content="Thomas Kluyver">
+<link rel="prev" href="i-cant-import-it.html" title="I can't import it!" type="text/html">
+<meta property="og:site_name" content="Codel">
+<meta property="og:title" content="Why do we love the terminal?">
+<meta property="og:url" content="http://takluyver.github.io/posts/why-we-love-the-terminal.html">
+<meta property="og:description" content="The terminal is a tool many programmers use every day. But unusually for a
+software tool, it hasn't changed much in quite a long time. When we open up a
+terminal window, it's so that our computer can ">
+<meta property="og:type" content="article">
+<meta property="article:published_time" content="2017-08-16T11:20:00Z">
+</head>
+<body>
+
+<!-- Menubar -->
+
+<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation"><div class="container">
+<!-- This keeps the margins nice -->
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="http://takluyver.github.io/">
+
+                <span id="blog-title">Codel</span>
+            </a>
+        </div>
+<!-- /.navbar-header -->
+        <div class="collapse navbar-collapse navbar-ex1-collapse">
+            <ul class="nav navbar-nav">
+<li>
+<a href="../archive.html">Archives</a>
+                </li>
+<li>
+<a href="../categories/index.html">Tags</a>
+                </li>
+<li>
+<a href="../rss.xml">RSS</a>
+
+                
+            </li>
+</ul>
+<ul class="nav navbar-nav navbar-right"></ul>
+</div>
+<!-- /.navbar-collapse -->
+    </div>
+<!-- /.container -->
+</nav><!-- End of Menubar --><div class="container">
+    <div class="body-content">
+        <!--Body content-->
+        <div class="row">
+            
+<article class="post-text h-entry hentry postpage" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title" itemprop="headline name"><a href="#" class="u-url">Why do we love the terminal?</a></h1>
+
+        <div class="metadata">
+            <p class="byline author vcard"><span class="byline-name fn" itemprop="author">
+                    Thomas Kluyver
+            </span></p>
+            <p class="dateline"><a href="#" rel="bookmark"><time class="published dt-published" datetime="2017-08-16T11:20:00Z" itemprop="datePublished" title="2017-08-16 11:20">2017-08-16 11:20</time></a></p>
+                <p class="commentline">            <a href="why-we-love-the-terminal.html#disqus_thread" data-disqus-identifier="cache/posts/love-the-terminal.html">Comments</a>
+
+
+                    </p>
+<p class="sourceline"><a href="why-we-love-the-terminal.rst" class="sourcelink">Source</a></p>
+
+        </div>
+        
+    </header><div class="e-content entry-content" itemprop="articleBody text">
+    <div>
+<p>The terminal is a tool many programmers use every day. But unusually for a
+software tool, it hasn't changed much in quite a long time. When we open up a
+terminal window, it's so that our computer can pretend to be a VT100 from 1978:</p>
+<div class="figure">
+<img alt="/images/DEC_VT100_terminal.jpg" src="../images/DEC_VT100_terminal.jpg"><p class="caption">VT100 terminal (from Jason Scott <a class="reference external" href="https://commons.wikimedia.org/wiki/File:DEC_VT100_terminal.jpg">on Wikimedia Commons</a>)</p>
+</div>
+<p>And the way programs talk to it is even older. Terminals are sometimes called TTYs,
+which is short for teletypewriter:</p>
+<div class="figure">
+<img alt="/images/Teletype.jpg" src="../images/Teletype.jpg"><p class="caption">Teletype model 33 (from AlisonW <a class="reference external" href="https://commons.wikimedia.org/wiki/File:Teletype_with_papertape_punch_and_reader.jpg">on Wikimedia Commons</a>)</p>
+</div>
+<p>Our computers have got massively more powerful since the 70s, and the interfaces
+are immensely richer. We use many other interfaces alongside the terminal, but
+it's still important and nothing is about to replace it. Why is this basic
+interface so great?</p>
+<p>The answer has three parts: the keyboard, the terminal and the shell. Each one
+has a set of advantages we can use in designing other applications and systems.</p>
+<img alt="/images/tango-keyboard.png" class="align-right" src="../images/tango-keyboard.png"><div class="section" id="keyboard-interfaces">
+<h2>Keyboard interfaces</h2>
+<p>The keyboard gives us a glorious power to talk to the computer. My laptop has 83
+keys, and my fingers mostly know their own way to the keys I want, with little
+thought involved. We can also combine keys (like Ctrl-C) to give more meanings.
+In comparison, moving a mouse to click on things feels very limiting.</p>
+<p>Some programmers really care about their keyboards, and spend considerable sums
+on ergonomic keyboards or <a class="reference external" href="https://en.wikipedia.org/wiki/Cherry_(keyboards)">special key switches</a>. But even a basic USB or
+laptop keyboard is a very effective way for your fingers to control the computer.</p>
+<p>Mice have their place too: the keyboard would be a clumsy tool for
+editing photos, for instance. And increasingly we interact with our computers
+via touchscreens, which have their own advantages and disadvantages. But for
+many tasks, it's hard to beat fingers on physical keys. Switching between
+keyboard and mouse (or touchscreen) also slows us down, so if we're already
+using the keyboard, we like to keep our fingers there.</p>
+<p>Applications are starting to recognise the benefits of keyboard interfaces
+again. I'm writing this post in Atom, which is one of several modern editors
+with a command palette:</p>
+<img alt="/images/atom-cmd-palette.png" class="align-center" src="../images/atom-cmd-palette.png"><p>I open the command palette with a keyboard shortcut,
+it searches the available commands as I type,
+and it's smart enough to deal with spelling mistakes.
+Keyboard interfaces are often considered more difficult for new users,
+but this design can be easier than searching through nested menus
+or trying to remember dozens of toolbar icons.</p>
+<img alt="/images/tango-display.png" class="align-right" src="../images/tango-display.png">
+</div>
+<div class="section" id="the-terminal-itself">
+<h2>The terminal itself</h2>
+<p>The terminal is that grid of fixed-width characters (i and m take the same
+space, unlike in normal text), and the interfaces that control it. There are a
+few great things about the terminal:</p>
+<p>Firstly, the interface is <strong>established, stable, and predictable</strong>. If a program writes
+<tt class="docutils literal">'\x1b1;31m'</tt> to the terminal, the output will turn red. This 'ANSI escape code'
+works in Gnome terminal, in Konsole, Xterm, iTerm, and in the web-based terminal
+output from Travis CI jobs. It will work with a terminal from 10 years ago, and
+probably one from 10 years in the future. Terminals did once have compatibility
+issues, and the <a class="reference external" href="https://en.wikipedia.org/wiki/Terminfo">terminfo</a> database
+was built to handle this, but today we rarely have to worry about it.</p>
+<p>Secondly, the terminal is mostly controlled by <strong>in-band signalling</strong>—special
+codes, like the 'switch to red' code above, are written to and read from the
+terminal. There are a few exceptions, like changing the size of the terminal
+window, which use other API calls, but mostly it comes down to reading and
+writing bytes. Those bytes can easily be sent over the network to control a
+terminal remotely, e.g. over SSH.
+They can even be <a class="reference external" href="https://asciinema.org/">recorded</a>.</p>
+<p>Thirdly, the terminal is very <strong>efficient</strong>. My laptop has over 2 million pixels,
+but a full screen terminal only has around 12500 characters. So using
+SSH requires only a tiny amount of bandwidth, because it sends characters rather
+than pixels. And SSH isn't specially designed for poor connections:
+<a class="reference external" href="https://mosh.org/">Mosh</a> is a modern alternative which is.</p>
+<img alt="/images/tango-terminal.png" class="align-right" src="../images/tango-terminal.png">
+</div>
+<div class="section" id="the-shell">
+<h2>The shell</h2>
+<p>There are many programs you can run in a terminal, but most often you're
+interacting with a 'system shell' such as <em>bash</em> or <em>zsh</em>. You type a command in,
+press enter, the computer runs it and prompts you for another.</p>
+<p>These commands are definitely harder to learn than clicking around files and
+settings. But if you need to ask for help online,
+an explanation of what to click is much more work than a command to copy+paste,
+both for you and for the person answering.
+And once you know some commands, it's easy to put
+them into a script to repeat a procedure you need to do often—there's no
+convenient equivalent for clicking things.</p>
+<p>Writing a command-line program to be run from the shell is much less work than
+designing and creating a GUI (graphical user interface),
+whatever programming language and toolkit you're using.
+This is especially true if the program needs to run on different platforms.
+So there are lots of command line tools with no GUI equivalent—like
+pip, which installs Python packages, or nikola, which builds this blog.
+The obvious way to use these tools is in the terminal.</p>
+<p>The combination of these three pieces—the keyboard, the terminal API and the
+command line—along with all the programs written for this environment, means
+that we'll be typing commands into a terminal for a long time yet, even if it
+looks arcane and outdated.</p>
+</div>
+</div>
+    </div>
+    <aside class="postpromonav"><nav><ul class="pager hidden-print">
+<li class="previous">
+                <a href="i-cant-import-it.html" rel="prev" title="I can't import it!">Previous post</a>
+            </li>
+        </ul></nav></aside><section class="comments hidden-print"><h2>Comments</h2>
+                        <div id="disqus_thread"></div>
+        <script>
+        var disqus_shortname ="takluyverblog",
+            disqus_url="http://takluyver.github.io/posts/why-we-love-the-terminal.html",
+        disqus_title="Why do we love the terminal?",
+        disqus_identifier="cache/posts/love-the-terminal.html",
+        disqus_config = function () {
+            this.language = "en";
+        };
+        (function() {
+            var dsq = document.createElement('script'); dsq.async = true;
+            dsq.src = 'https://' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script><noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a>
+</noscript>
+    <a href="https://disqus.com" class="dsq-brlink" rel="nofollow">Comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+        </section></article><script>var disqus_shortname="takluyverblog";(function(){var a=document.createElement("script");a.async=true;a.src="https://"+disqus_shortname+".disqus.com/count.js";(document.getElementsByTagName("head")[0]||document.getElementsByTagName("body")[0]).appendChild(a)}());</script>
+</div>
+        <!--End of body content-->
+
+        <footer>
+            Contents © 2017         <a href="mailto:takowl@gmail.com">Thomas Kluyver</a> - Powered by         <a href="http://nikola.ralsina.com.ar">Nikola</a>
+            
+        </footer>
+</div>
+</div>
+
+            <script src="../assets/js/jquery.min.js"></script><script src="../assets/js/bootstrap.min.js"></script><script src="../assets/js/jquery.colorbox-min.js"></script><script>jQuery("a.image-reference").colorbox({rel:"gal",maxWidth:"100%",maxHeight:"100%",scalePhotos:true});</script>
+</body>
+</html>

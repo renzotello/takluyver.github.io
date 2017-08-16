@@ -1,5 +1,101 @@
 <?xml version="1.0" encoding="utf-8"?>
-<?xml-stylesheet type="text/xsl" href="assets/xml/rss.xsl" media="all"?><rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/"><channel><title>Codel</title><link>http://takluyver.github.io/</link><description>Thoughts about code</description><atom:link type="application/rss+xml" href="http://takluyver.github.io/rss.xml" rel="self"></atom:link><language>en</language><lastBuildDate>Sun, 16 Jul 2017 09:21:52 GMT</lastBuildDate><generator>Nikola (getnikola.com)</generator><docs>http://blogs.law.harvard.edu/tech/rss</docs><item><title>I can't import it!</title><link>http://takluyver.github.io/posts/i-cant-import-it.html</link><dc:creator>Thomas Kluyver</dc:creator><description>&lt;div&gt;&lt;p&gt;Have you installed a Python package, but now you can't import it?
+<?xml-stylesheet type="text/xsl" href="assets/xml/rss.xsl" media="all"?><rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Codel</title><link>http://takluyver.github.io/</link><description>Thoughts about code</description><atom:link href="http://takluyver.github.io/rss.xml" rel="self" type="application/rss+xml"></atom:link><language>en</language><lastBuildDate>Wed, 16 Aug 2017 18:51:48 GMT</lastBuildDate><generator>Nikola (getnikola.com)</generator><docs>http://blogs.law.harvard.edu/tech/rss</docs><item><title>Why do we love the terminal?</title><link>http://takluyver.github.io/posts/why-we-love-the-terminal.html</link><dc:creator>Thomas Kluyver</dc:creator><description>&lt;div&gt;&lt;p&gt;The terminal is a tool many programmers use every day. But unusually for a
+software tool, it hasn't changed much in quite a long time. When we open up a
+terminal window, it's so that our computer can pretend to be a VT100 from 1978:&lt;/p&gt;
+&lt;div class="figure"&gt;
+&lt;img alt="/images/DEC_VT100_terminal.jpg" src="http://takluyver.github.io/images/DEC_VT100_terminal.jpg"&gt;
+&lt;p class="caption"&gt;VT100 terminal (from Jason Scott &lt;a class="reference external" href="https://commons.wikimedia.org/wiki/File:DEC_VT100_terminal.jpg"&gt;on Wikimedia Commons&lt;/a&gt;)&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;And the way programs talk to it is even older. Terminals are sometimes called TTYs,
+which is short for teletypewriter:&lt;/p&gt;
+&lt;div class="figure"&gt;
+&lt;img alt="/images/Teletype.jpg" src="http://takluyver.github.io/images/Teletype.jpg"&gt;
+&lt;p class="caption"&gt;Teletype model 33 (from AlisonW &lt;a class="reference external" href="https://commons.wikimedia.org/wiki/File:Teletype_with_papertape_punch_and_reader.jpg"&gt;on Wikimedia Commons&lt;/a&gt;)&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;Our computers have got massively more powerful since the 70s, and the interfaces
+are immensely richer. We use many other interfaces alongside the terminal, but
+it's still important and nothing is about to replace it. Why is this basic
+interface so great?&lt;/p&gt;
+&lt;p&gt;The answer has three parts: the keyboard, the terminal and the shell. Each one
+has a set of advantages we can use in designing other applications and systems.&lt;/p&gt;
+&lt;img alt="/images/tango-keyboard.png" class="align-right" src="http://takluyver.github.io/images/tango-keyboard.png"&gt;
+&lt;div class="section" id="keyboard-interfaces"&gt;
+&lt;h2&gt;Keyboard interfaces&lt;/h2&gt;
+&lt;p&gt;The keyboard gives us a glorious power to talk to the computer. My laptop has 83
+keys, and my fingers mostly know their own way to the keys I want, with little
+thought involved. We can also combine keys (like Ctrl-C) to give more meanings.
+In comparison, moving a mouse to click on things feels very limiting.&lt;/p&gt;
+&lt;p&gt;Some programmers really care about their keyboards, and spend considerable sums
+on ergonomic keyboards or &lt;a class="reference external" href="https://en.wikipedia.org/wiki/Cherry_(keyboards)"&gt;special key switches&lt;/a&gt;. But even a basic USB or
+laptop keyboard is a very effective way for your fingers to control the computer.&lt;/p&gt;
+&lt;p&gt;Mice have their place too: the keyboard would be a clumsy tool for
+editing photos, for instance. And increasingly we interact with our computers
+via touchscreens, which have their own advantages and disadvantages. But for
+many tasks, it's hard to beat fingers on physical keys. Switching between
+keyboard and mouse (or touchscreen) also slows us down, so if we're already
+using the keyboard, we like to keep our fingers there.&lt;/p&gt;
+&lt;p&gt;Applications are starting to recognise the benefits of keyboard interfaces
+again. I'm writing this post in Atom, which is one of several modern editors
+with a command palette:&lt;/p&gt;
+&lt;img alt="/images/atom-cmd-palette.png" class="align-center" src="http://takluyver.github.io/images/atom-cmd-palette.png"&gt;
+&lt;p&gt;I open the command palette with a keyboard shortcut,
+it searches the available commands as I type,
+and it's smart enough to deal with spelling mistakes.
+Keyboard interfaces are often considered more difficult for new users,
+but this design can be easier than searching through nested menus
+or trying to remember dozens of toolbar icons.&lt;/p&gt;
+&lt;img alt="/images/tango-display.png" class="align-right" src="http://takluyver.github.io/images/tango-display.png"&gt;
+&lt;/div&gt;
+&lt;div class="section" id="the-terminal-itself"&gt;
+&lt;h2&gt;The terminal itself&lt;/h2&gt;
+&lt;p&gt;The terminal is that grid of fixed-width characters (i and m take the same
+space, unlike in normal text), and the interfaces that control it. There are a
+few great things about the terminal:&lt;/p&gt;
+&lt;p&gt;Firstly, the interface is &lt;strong&gt;established, stable, and predictable&lt;/strong&gt;. If a program writes
+&lt;tt class="docutils literal"&gt;'\x1b1;31m'&lt;/tt&gt; to the terminal, the output will turn red. This 'ANSI escape code'
+works in Gnome terminal, in Konsole, Xterm, iTerm, and in the web-based terminal
+output from Travis CI jobs. It will work with a terminal from 10 years ago, and
+probably one from 10 years in the future. Terminals did once have compatibility
+issues, and the &lt;a class="reference external" href="https://en.wikipedia.org/wiki/Terminfo"&gt;terminfo&lt;/a&gt; database
+was built to handle this, but today we rarely have to worry about it.&lt;/p&gt;
+&lt;p&gt;Secondly, the terminal is mostly controlled by &lt;strong&gt;in-band signalling&lt;/strong&gt;—special
+codes, like the 'switch to red' code above, are written to and read from the
+terminal. There are a few exceptions, like changing the size of the terminal
+window, which use other API calls, but mostly it comes down to reading and
+writing bytes. Those bytes can easily be sent over the network to control a
+terminal remotely, e.g. over SSH.
+They can even be &lt;a class="reference external" href="https://asciinema.org/"&gt;recorded&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Thirdly, the terminal is very &lt;strong&gt;efficient&lt;/strong&gt;. My laptop has over 2 million pixels,
+but a full screen terminal only has around 12500 characters. So using
+SSH requires only a tiny amount of bandwidth, because it sends characters rather
+than pixels. And SSH isn't specially designed for poor connections:
+&lt;a class="reference external" href="https://mosh.org/"&gt;Mosh&lt;/a&gt; is a modern alternative which is.&lt;/p&gt;
+&lt;img alt="/images/tango-terminal.png" class="align-right" src="http://takluyver.github.io/images/tango-terminal.png"&gt;
+&lt;/div&gt;
+&lt;div class="section" id="the-shell"&gt;
+&lt;h2&gt;The shell&lt;/h2&gt;
+&lt;p&gt;There are many programs you can run in a terminal, but most often you're
+interacting with a 'system shell' such as &lt;em&gt;bash&lt;/em&gt; or &lt;em&gt;zsh&lt;/em&gt;. You type a command in,
+press enter, the computer runs it and prompts you for another.&lt;/p&gt;
+&lt;p&gt;These commands are definitely harder to learn than clicking around files and
+settings. But if you need to ask for help online,
+an explanation of what to click is much more work than a command to copy+paste,
+both for you and for the person answering.
+And once you know some commands, it's easy to put
+them into a script to repeat a procedure you need to do often—there's no
+convenient equivalent for clicking things.&lt;/p&gt;
+&lt;p&gt;Writing a command-line program to be run from the shell is much less work than
+designing and creating a GUI (graphical user interface),
+whatever programming language and toolkit you're using.
+This is especially true if the program needs to run on different platforms.
+So there are lots of command line tools with no GUI equivalent—like
+pip, which installs Python packages, or nikola, which builds this blog.
+The obvious way to use these tools is in the terminal.&lt;/p&gt;
+&lt;p&gt;The combination of these three pieces—the keyboard, the terminal API and the
+command line—along with all the programs written for this environment, means
+that we'll be typing commands into a terminal for a long time yet, even if it
+looks arcane and outdated.&lt;/p&gt;
+&lt;/div&gt;&lt;/div&gt;</description><guid>http://takluyver.github.io/posts/why-we-love-the-terminal.html</guid><pubDate>Wed, 16 Aug 2017 11:20:00 GMT</pubDate></item><item><title>I can't import it!</title><link>http://takluyver.github.io/posts/i-cant-import-it.html</link><dc:creator>Thomas Kluyver</dc:creator><description>&lt;div&gt;&lt;p&gt;Have you installed a Python package, but now you can't import it?
 Or can you import it when you run code one way,
 but not when you run code another way?&lt;/p&gt;
 &lt;p&gt;These are common problems, and this post is an attempt to explain what's
