@@ -17,7 +17,7 @@ article: http://ogp.me/ns/article#
 <link rel="alternate" type="application/rss+xml" title="RSS" href="rss.xml">
 <link rel="canonical" href="http://takluyver.github.io/index.html">
 <!--[if lt IE 9]><script src="/assets/js/html5.js"></script><![endif]--><link rel="stylesheet" type="text/css" href="assets/css/custom.css">
-<link rel="prefetch" href="posts/why-we-love-the-terminal.html" type="text/html">
+<link rel="prefetch" href="posts/wheres-my-open-smartphone.html" type="text/html">
 </head>
 <body>
 
@@ -65,7 +65,183 @@ article: http://ogp.me/ns/article#
     
     
 <div class="postindex">
-    <article class="h-entry post-text"><header><h1 class="p-name entry-title"><a href="posts/why-we-love-the-terminal.html" class="u-url">Why do we love the terminal?</a></h1>
+    <article class="h-entry post-text"><header><h1 class="p-name entry-title"><a href="posts/wheres-my-open-smartphone.html" class="u-url">Where's my open smartphone?</a></h1>
+        <div class="metadata">
+            <p class="byline author vcard"><span class="byline-name fn" itemprop="author">
+                Thomas Kluyver
+            </span></p>
+            <p class="dateline"><a href="posts/wheres-my-open-smartphone.html" rel="bookmark"><time class="published dt-published" datetime="2017-11-19T09:27:28Z" title="2017-11-19 09:27">2017-11-19 09:27</time></a></p>
+                <p class="commentline">            <a href="posts/wheres-my-open-smartphone.html#disqus_thread" data-disqus-identifier="cache/posts/wheres-my-open-smartphone.html">Comments</a>
+
+
+        </p>
+</div>
+    </header><div class="e-content entry-content">
+    <div>
+<p>The <a class="reference external" href="https://en.wikipedia.org/wiki/IBM_Simon">IBM Simon</a>, released in 1994,
+has been called the first smartphone. But it was the launch of the iPhone in
+2007 that brought touchscreen, pocket sized computers to the mass market. Today,
+over <a class="reference external" href="https://www2.deloitte.com/uk/en/pages/press-releases/articles/smartphone-ownership-peaks.html">three quarters of adults</a>
+in the UK own a smartphone. We keep our phones on 24/7, tiny computers running
+full operating systems, with microphones, cameras, GPS and accelerometers.
+The possibilities if we control them ourselves are amazing,
+and the possibilities if someone else gets control are terrifying.
+So we've got good reasons to want a phone running software that we can inspect
+and change.</p>
+<p>This post, based on a talk I did for <a class="reference external" href="http://portsmouth.lug.org.uk/">Portsmouth Linux User Group</a>, looks at the landscape of free and open
+source software (FOSS) available for phones in late 2017.</p>
+<div class="section" id="the-big-two">
+<h2>The big two</h2>
+<p>Before we get into the FOSS alternatives, how open are the two platforms that
+make up the vast majority of the smartphone market today?</p>
+<div class="figure align-center">
+<img alt="/images/android_ios_openness.png" src="images/android_ios_openness.png"><p class="caption">Open parts in green, proprietary parts in red.</p>
+</div>
+<p>Both Android and iOS have some open-source parts. But they require
+proprietary drivers and firmware to run on most phones. The freedom to modify
+the software and run your modified version is not readily available to end users.
+Google's <a class="reference external" href="https://arstechnica.co.uk/gadgets/2017/05/google-android-updates-project-treble/">Project Treble</a>,
+which aims to make updating Android easier, <em>might</em> make it more feasible to
+run modified versions of Android.</p>
+<p>Developers can build apps on the <a class="reference external" href="https://source.android.com/">open source Android platform</a>, but many apps also rely on proprietary
+Google APIs.</p>
+<p>With an option in the security settings, Android allows 'sideloading' apps from
+sources other than the Google Play store. This possibility allows
+<a class="reference external" href="https://f-droid.org/">F-Droid</a> to exist: an app store solely for FOSS
+applications. If you've got an Android device, give F-Droid a try: it's an easy,
+low risk step into the mobile open source world.
+Its catalogue of ~1400 applications is tiny compared to the millions in Google
+Play, but you might discover something interesting.</p>
+<p>Now, what other options are there besides the big two?</p>
+</div>
+<div class="section" id="commercial-offerings">
+<h2>Commercial offerings</h2>
+<p>First, what other platforms can you (or could you) buy a phone with?</p>
+<div class="figure">
+<img alt="/images/fxos_geeksphone_peak.jpg" src="images/fxos_geeksphone_peak.jpg"><p class="caption">Geeksphone Peak running Firefox OS. Image by Havarhen via <a class="reference external" href="https://commons.wikimedia.org/wiki/File:GeeksPhone_Peak.jpeg">Wikimedia Commons</a>.</p>
+</div>
+<p><strong>Firefox OS</strong> was launched in 2011, with a goal of running on inexpensive
+low-end smartphones, for people in developing countries who may not have a
+smartphone already. It relied heavily on browser technologies—HTML, CSS and
+Javascript—for both applications and the system UI. That's no surprise for a
+platform from Mozilla. A number of devices were released running Firefox OS, but
+in 2016 Mozilla decided to refocus its efforts elsewhere.
+A fork called <a class="reference external" href="http://www.kaiostech.com/">KaiOS</a> lives on, but there's
+little information available about it.</p>
+<hr class="docutils">
+<div class="figure">
+<img alt="/images/ubuntu-touch-nexus5.png" src="images/ubuntu-touch-nexus5.png"><p class="caption">Nexus 5 running Ubuntu Touch. Image by Vinodh Moodley via <a class="reference external" href="https://commons.wikimedia.org/wiki/File:Nexus-5-Ubuntu-Touch-small.png">Wikimedia Commons</a>.</p>
+</div>
+<p><strong>Ubuntu Touch</strong> was also launched in 2011. Spanish manufacturer <em>BQ</em> and Chinese
+<em>Meizu</em> made a handful of models running Ubuntu Touch. But it's best known
+for the <a class="reference external" href="https://www.indiegogo.com/projects/ubuntu-edge#/">Ubuntu Edge</a>, a
+wildly ambitious crowdfunding campaign for a premium smartphone which could be
+plugged into a monitor and keyboard to run a full Ubuntu desktop. Despite
+thousands of eager pledges, it didn't get close to its $32 million goal, so
+people got their money back and the project was cancelled. Canonical kept
+promoting Ubuntu Touch until earlier this year, when they handed it over to the
+<a class="reference external" href="https://ubports.com/">UBports</a> community project.</p>
+<hr class="docutils">
+<p>Next up, there's... these things:</p>
+<div class="figure">
+<img alt="/images/Mer_and_mobile_operating_systems.png" src="images/Mer_and_mobile_operating_systems.png"><p class="caption">Mobile OS family tree, by Semsi Paco Virchow on <a class="reference external" href="https://commons.wikimedia.org/wiki/File:Mer_and_mobile_operating_systems.svg">Wikimedia Commons</a>.</p>
+</div>
+<p>Nokia used to make remarkably open 'internet tablets' based on Maemo, and then
+<a class="reference external" href="https://en.wikipedia.org/wiki/Nokia_N9">one phone</a> using Meego, before they
+went all-in on Windows Phone in 2011. We can only wonder what might have been
+if they'd stuck with their Linux platform.</p>
+<p>Samsung's branch of this family is now called <strong>Tizen</strong>. Samsung have used it
+in several smartwatches, and a line of smartphones sold in India, such as the
+<a class="reference external" href="https://www.samsung.com/in/microsite/z2/">Z2</a>. I'm not sure that Samsung
+is any better a guardian of a free and open platform than Google, but they might
+put a small dent in Android's market dominance.</p>
+<hr class="docutils">
+<div class="figure">
+<img alt="/images/Jolla_Touchstone.jpg" src="images/Jolla_Touchstone.jpg"><p class="caption">Jolla smartphone running Sailfish OS. Image by Herman on <a class="reference external" href="https://commons.wikimedia.org/wiki/File:Jolla_Touchstone.jpg">Wikimedia Commons</a>.</p>
+</div>
+<p>The other branch I want to point out is <strong>Sailfish</strong>, maintained by <em>Jolla</em>,
+a company founded by ex-Nokia employees. Jolla produced a couple of devices
+themselves, then turned to a licensing model. A few other companies have now
+released Sailfish phones. However, Sailfish OS is not completely open source;
+<a class="reference external" href="https://www.reddit.com/r/linux/comments/73amlm/so_how_open_is_sailfish_os_really/">this Reddit post</a>
+describes which parts of the stack are open.</p>
+</div>
+<div class="section" id="diy-options">
+<h2>DIY options</h2>
+<p>Nothing you can buy today could really be called an open smartphone, as
+far as I've found. So what can we install ourselves?</p>
+<p><strong>LineageOS</strong>, formerly called CyanogenMod, is probably the most popular
+alternative Android distribution. It has support for quite a lot of phones,
+but far from all of them. If you've got a supported phone, installation looks
+<a class="reference external" href="https://youtu.be/5snxtA5e2RY?t=1m15s">like this</a>—not too complex, but you'd
+need quite a bit of confidence to try this on your only phone.</p>
+<p>Android ROMs like Lineage are often used together with <strong>Open GApps</strong>, which
+provides the proprietary Google applications that are bundled into Android
+phones when you buy them. I'm not sure I'd call that 'open', but it's
+undeniably useful for many people who rely on Google services.</p>
+<p>One other Android distribution I'll mention is <strong>Replicant</strong>. This is a
+strictly free software distribution, avoiding proprietary code as much as
+possible. However, it only supports a <a class="reference external" href="https://www.replicant.us/supported-devices.php">few devices</a>, all of which appear to be
+older models. F-Droid's collection of open source apps (see above) is a crucial
+companion for a distribution like this.</p>
+<hr class="docutils">
+<div class="figure">
+<img alt="/images/postmarketos_galaxy_nexus.jpg" src="images/postmarketos_galaxy_nexus.jpg"><p class="caption">XFCE and Wayland running on a Galaxy Nexus. Image by Drebrez, via
+<a class="reference external" href="https://wiki.postmarketos.org/wiki/File:Google_Galaxy_Nexus_GSM_running_Xfce4.jpeg">PostmarketOS wiki</a>.</p>
+</div>
+<p><strong>PostmarketOS</strong> is a new non-Android based entrant, which aims to keep devices
+running updated GNU/Linux for ten years. It can already run on <a class="reference external" href="https://wiki.postmarketos.org/wiki/Devices">more than 30
+devices</a>, which sounds
+impressive, but in most cases key features like audio and cameras are not
+working yet. We have to hope that this can evolve into a useful phone platform.</p>
+</div>
+<div class="section" id="a-new-hope">
+<h2>A new hope</h2>
+<p>I'm writing this a few weeks after the <a class="reference external" href="https://puri.sm/shop/librem-5/">Purism Librem 5</a> crowdfunding campaign comfortably met its
+$1.5 million target. Purism, a company that already sells open laptops, plans to
+make a phone that's as open as possible, with hardware switches to disconnect
+parts like the cellular modem, which probably has to run proprietary code.
+They even say that, like the unrealised Ubuntu Edge, you will be able to plug in
+peripherals and run a full Linux desktop from it. The estimated shipping date
+is early in 2019.</p>
+<p>The Librem 5 is currently the hot new thing in the open phone world, but there
+are already <a class="reference external" href="https://nullr0ute.com/2017/10/why-im-not-backing-the-purism-librem-5-phone/">some concerns</a>
+about it. At $600, it's priced like a premium device, but the proposed chips
+date from either 2013 or 2011, so the experience in 2019 may be underwhelming.
+And it could still require proprietary firmware for tasks like decoding video.</p>
+</div>
+<div class="section" id="key-challenges">
+<h2>Key challenges</h2>
+<p>The biggest challenge for any alternative mobile OS is bootstrapping an app ecosystem.
+A platform with few apps struggles to attract users, and with few users
+there's little incentive for developers to make apps. Catch 22.
+Even Microsoft's efforts weren't enough to create a viable ecosystem around
+Windows Phone.</p>
+<p>There are a couple of strategies companies have tried to avoid the 'app trap':</p>
+<ul class="simple">
+<li>HTML apps: the web is an open platform, and lots of services already have a
+mobile web interface, although it's often inferior to their native mobile apps.
+Despite all of the effort going into browsers, though, web applications still
+tend to feel slower than native ones, and rarely work well offline.</li>
+<li>Emulate Android: Sailfish does this, albeit with a proprietary component.
+But if you do it well, developers won't target your platform specifically,
+so it won't have much to differentiate it from Android.</li>
+</ul>
+<p>Open source efforts face another challenge. The Fedora image I installed on
+my laptop would work on most 64-bit PCs, but with a phone OS, you have to
+download an image for one specific model. This makes it much harder to casually
+experiment with an alternative OS: someone needs to build it for the
+exact phone you have. PostmarketOS is attempting to change this model, but it's
+very early days. Meanwhile, Google's 'Project Treble' may provide a common
+interface to build a platform on, although it leaves a lot of code below the
+common interface under the control of vendors.</p>
+<hr class="docutils">
+<p><em>What options have I missed?   Please point out other
+FOSS phone projects in the comments.</em></p>
+</div>
+</div>
+    </div>
+    </article><article class="h-entry post-text"><header><h1 class="p-name entry-title"><a href="posts/why-we-love-the-terminal.html" class="u-url">Why do we love the terminal?</a></h1>
         <div class="metadata">
             <p class="byline author vcard"><span class="byline-name fn" itemprop="author">
                 Thomas Kluyver

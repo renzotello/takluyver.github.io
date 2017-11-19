@@ -19,11 +19,11 @@
  </url>
  <url>
   <loc>http://takluyver.github.io/2017/index.html</loc>
-  <lastmod>2017-08-16T18:51:00Z</lastmod>
+  <lastmod>2017-11-19T17:29:00Z</lastmod>
  </url>
  <url>
   <loc>http://takluyver.github.io/archive.html</loc>
-  <lastmod>2017-08-16T17:57:00Z</lastmod>
+  <lastmod>2017-11-19T11:07:00Z</lastmod>
  </url>
  <url>
   <loc>http://takluyver.github.io/categories/index.html</loc>
@@ -35,7 +35,7 @@
  </url>
  <url>
   <loc>http://takluyver.github.io/index.html</loc>
-  <lastmod>2017-08-16T18:51:00Z</lastmod>
+  <lastmod>2017-11-19T17:29:00Z</lastmod>
  </url>
  <url>
   <loc>http://takluyver.github.io/listings/__pycache__/index.html</loc>
@@ -70,12 +70,16 @@
   <lastmod>2017-08-16T17:57:00Z</lastmod>
  </url>
  <url>
+  <loc>http://takluyver.github.io/posts/wheres-my-open-smartphone.html</loc>
+  <lastmod>2017-11-19T17:29:00Z</lastmod>
+ </url>
+ <url>
   <loc>http://takluyver.github.io/posts/why-did-i-write-yet-another-package-manager.html</loc>
   <lastmod>2017-08-16T17:57:00Z</lastmod>
  </url>
  <url>
   <loc>http://takluyver.github.io/posts/why-we-love-the-terminal.html</loc>
-  <lastmod>2017-08-16T18:51:00Z</lastmod>
+  <lastmod>2017-11-19T11:07:00Z</lastmod>
  </url>
  <url>
   <loc>http://takluyver.github.io/posts/writing-readable-python-coroutines.html</loc>
